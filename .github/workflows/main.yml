@@ -130,7 +130,7 @@ jobs:
 
       - name: Build ISO via privileged Fedora container
         run: |
-          podman run --rm --privileged \
+          sudo podman run --rm --privileged \
             --device /dev/loop-control \
             -v "${{ github.workspace }}:/project:z" \
             -w /project \
