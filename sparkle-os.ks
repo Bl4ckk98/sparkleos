@@ -40,6 +40,8 @@ url --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=fedora-42&arc
 repo --name=fedora-updates --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f42&arch=$basearch
 
 # Copr bl4ckk/sparkle-os
+# NOTA: in CI questa repo è pronta perché build-iso parte dopo build-rpm.
+# Per test locali, commentare le 2 righe seguenti:
 repo --name=copr-sparkle-os --baseurl=https://download.copr.fedorainfracloud.org/results/bl4ckk/sparkle-os/fedora-42-x86_64/
 
 # ============================================================
@@ -47,6 +49,7 @@ repo --name=copr-sparkle-os --baseurl=https://download.copr.fedorainfracloud.org
 # ============================================================
 %packages
 # Pacchetto aziendale SparkleOS (dal Copr)
+# NOTA: commentare per test locali se COPR non è ancora pronto
 sparkle-os
 
 # Pacchetto richiesto per Live ISO

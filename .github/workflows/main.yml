@@ -95,8 +95,8 @@ jobs:
             --chroot fedora-42-x86_64 \
             ${COPR_USERNAME}/sparkle-os \
             "$SRPM" \
-            --nowait
-          echo "Build submitted to Copr!"
+            --wait
+          echo "Build completata su Copr!"
 
       - name: Upload RPM artifacts
         if: always()
@@ -116,6 +116,7 @@ jobs:
   build-iso:
     name: Build ISO
     runs-on: ubuntu-latest
+    needs: build-rpm          # attende che l'RPM sia su COPR prima di buildare la ISO
     container:
       image: fedora:42
       options: --privileged --device /dev/loop-control

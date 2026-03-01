@@ -13,6 +13,7 @@ URL:            https://github.com/bl4ckk/sparkleos
 Source0:        %{name}-%{version}.tar.gz
 
 BuildArch:      noarch
+BuildRequires:  coreutils
 
 # -------------------------------------------------------------------------
 # Dipendenze runtime
@@ -68,7 +69,7 @@ install -d %{buildroot}%{_datadir}/backgrounds/sparkle
 install -m 0644 assets/background.jpg \
   %{buildroot}%{_datadir}/backgrounds/sparkle/background.jpg
 
-# --- Profilo VPN NetworkManager/libreswan --------------------------
+# --- Profilo VPN NetworkManager/libreswan ----------------------------------
 install -d %{buildroot}/etc/NetworkManager/system-connections
 install -m 0600 assets/tisparkle.nmconnection \
   %{buildroot}/etc/NetworkManager/system-connections/tisparkle.nmconnection
@@ -77,8 +78,6 @@ install -m 0600 assets/tisparkle.nmconnection \
 # %files — lista file inclusi nel pacchetto
 # =========================================================================
 %files
-%license
-%doc
 
 %{_bindir}/sparkle-am-ssh
 %{_bindir}/sparkle-loop-checker
@@ -97,5 +96,5 @@ install -m 0600 assets/tisparkle.nmconnection \
 * Sat Mar 01 2026 bl4ckk <bl4ckk@tisparkle.com> - 1.0.0-1
 - Prima release ufficiale SparkleOS (Fedora 42 / KDE)
 - Integrati: am-ssh, loop-checker, route-adder, netnumber-links
-- Aggiunto profilo VPN Shrew Soft (tisparkle.vpn)
+- Aggiunto profilo VPN libreswan (tisparkle.nmconnection)
 - Aggiunto sfondo aziendale
