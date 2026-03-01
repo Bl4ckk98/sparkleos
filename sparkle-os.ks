@@ -35,7 +35,6 @@ repo --name=fedora-updates \
      --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f42&arch=$basearch
 
 # Copr bl4ckk/sparkle-os
-# Assicurati di aver abilitato il progetto su https://copr.fedorainfracloud.org/coprs/bl4ckk/sparkle-os/
 repo --name=copr-sparkle-os \
      --baseurl=https://download.copr.fedorainfracloud.org/results/bl4ckk/sparkle-os/fedora-42-x86_64/
 
