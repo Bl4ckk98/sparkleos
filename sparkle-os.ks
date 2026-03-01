@@ -17,7 +17,7 @@ bootloader --location=mbr
 
 # ------ Partizionamento (minimale per ISO live) ---------------
 clearpart --all --initlabel
-autopart --type=plain
+part / --size=8192 --fstype=ext4
 
 # ------ Modalità grafica e DE --------------------------------
 xconfig --startxonboot
@@ -28,15 +28,12 @@ skipx
 # ============================================================
 
 # Fedora 42 — repo ufficiale
-repo --name=fedora \
-     --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=fedora-42&arch=$basearch
+url --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=fedora-42&arch=$basearch
 
-repo --name=fedora-updates \
-     --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f42&arch=$basearch
+repo --name=fedora-updates --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f42&arch=$basearch
 
 # Copr bl4ckk/sparkle-os
-repo --name=copr-sparkle-os \
-     --baseurl=https://download.copr.fedorainfracloud.org/results/bl4ckk/sparkle-os/fedora-42-x86_64/
+repo --name=copr-sparkle-os --baseurl=https://download.copr.fedorainfracloud.org/results/bl4ckk/sparkle-os/fedora-42-x86_64/
 
 # ============================================================
 # PACCHETTI
@@ -44,6 +41,9 @@ repo --name=copr-sparkle-os \
 %packages
 # Pacchetto aziendale SparkleOS (dal Copr)
 sparkle-os
+
+# Pacchetto richiesto per Live ISO
+dracut-live
 
 # Tool di base
 vim
