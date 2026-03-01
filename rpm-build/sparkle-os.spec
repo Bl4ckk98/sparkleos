@@ -19,21 +19,17 @@ BuildArch:      noarch
 # -------------------------------------------------------------------------
 Requires:       python3
 Requires:       python3-colorama
-Requires:       python3-tkinter
-# customtkinter non è nei repo Fedora; installalo con:
-#   pip install --user customtkinter
-# oppure aggiungi il tuo Copr secondario che lo fornisce.
-# Shrew Soft VPN client (ike)
-Requires:       shrew
+Requires:       python3-openpyxl
+# Richiesto per la VPN IKEv1 PSK+XAuth via NetworkManager
+Requires:       NetworkManager-libreswan
 
 %description
 Pacchetto unificato SparkleOS. Include:
   - sparkle-am-ssh          : SSH helper per nodi aziendali
   - sparkle-loop-checker    : Rilevamento loop TCAP su dump pcap
-  - sparkle-route-adder     : GUI per generazione comandi di routing
   - sparkle-netnumber-links : Analisi ed export link NetNumber SS7/Diameter
   - Sfondo aziendale        : /usr/share/backgrounds/sparkle/background.jpg
-  - Profilo VPN             : /etc/iked/sites/tisparkle.vpn
+  - Profilo VPN             : /etc/NetworkManager/system-connections/tisparkle.nmconnection
 
 # =========================================================================
 # %prep — estrai il tarball nella BUILD dir
@@ -57,7 +53,6 @@ install -d %{buildroot}%{_bindir}
 for script in \
     sparkle-am-ssh \
     sparkle-loop-checker \
-    sparkle-route-adder \
     sparkle-netnumber-links; do
   install -m 0755 rpm-build/src/scripts/${script} \
     %{buildroot}%{_bindir}/${script}
@@ -73,10 +68,10 @@ install -d %{buildroot}%{_datadir}/backgrounds/sparkle
 install -m 0644 assets/background.jpg \
   %{buildroot}%{_datadir}/backgrounds/sparkle/background.jpg
 
-# --- Profilo VPN Shrew Soft ------------------------------------------------
-install -d %{buildroot}/etc/iked/sites
-install -m 0640 assets/tisparkle.vpn \
-  %{buildroot}/etc/iked/sites/tisparkle.vpn
+# --- Profilo VPN NetworkManager/libreswan --------------------------
+install -d %{buildroot}/etc/NetworkManager/system-connections
+install -m 0600 assets/tisparkle.nmconnection \
+  %{buildroot}/etc/NetworkManager/system-connections/tisparkle.nmconnection
 
 # =========================================================================
 # %files — lista file inclusi nel pacchetto
@@ -87,14 +82,13 @@ install -m 0640 assets/tisparkle.vpn \
 
 %{_bindir}/sparkle-am-ssh
 %{_bindir}/sparkle-loop-checker
-%{_bindir}/sparkle-route-adder
 %{_bindir}/sparkle-netnumber-links
 
 %{_datadir}/sparkle-os/
 
 %{_datadir}/backgrounds/sparkle/background.jpg
 
-%config(noreplace) /etc/iked/sites/tisparkle.vpn
+%config(noreplace) /etc/NetworkManager/system-connections/tisparkle.nmconnection
 
 # =========================================================================
 # %changelog

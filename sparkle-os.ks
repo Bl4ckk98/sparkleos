@@ -48,17 +48,21 @@ sparkle-os
 
 # Tool di base
 vim
+nano
 git
 htop
-gnome-extensions-app
+curl
+wget
+bash-completion
+net-tools
 
 # Dipendenze Python per gli script SparkleOS
 python3
 python3-colorama
-python3-tkinter
+python3-openpyxl
 
-# VPN Shrew Soft
-shrew
+# VPN IKEv1 PSK+XAuth via NetworkManager nativo
+NetworkManager-libreswan
 
 # KDE Plasma — DE principale SparkleOS
 @kde-desktop-environment
