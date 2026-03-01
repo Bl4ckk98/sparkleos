@@ -1,7 +1,7 @@
 Name:           sparkle-os
 Version:        1.0.0
 Release:        1%{?dist}
-Summary:        SparkleOS - Strumenti aziendali TISpark integrati per Fedora
+Summary:        SparkleOS - Strumenti aziendali Sparkle integrati per Fedora
 
 License:        Proprietary
 URL:            https://github.com/bl4ckk/sparkleos
