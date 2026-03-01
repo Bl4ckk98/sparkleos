@@ -87,7 +87,7 @@ jobs:
 
       - name: Upload SRPM to Copr
         env:
-          COPR_USERNAME: ${{ secrets.COPR_USERNAME }}\
+          COPR_USERNAME: ${{ secrets.COPR_USERNAME }}
         run: |
           SRPM=$(ls ~/rpmbuild/SRPMS/sparkle-os-*.src.rpm)
           echo "Uploading: $SRPM"
