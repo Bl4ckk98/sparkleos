@@ -94,8 +94,7 @@ jobs:
           copr-cli build \
             --chroot fedora-42-x86_64 \
             ${COPR_USERNAME}/sparkle-os \
-            "$SRPM" \
-            --wait
+            "$SRPM"
           echo "Build completata su Copr!"
 
       - name: Upload RPM artifacts
