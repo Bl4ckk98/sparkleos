@@ -1,0 +1,20 @@
+#!/usr/bin/env python3
+# sparkle-netnumber-links — Analisi e export link NetNumber (SS7/Diameter)
+# Questo script è il punto di ingresso del modulo netnumber-links
+
+import sys
+import os
+
+# Aggiunge il modulo alla path quando installato in /usr/share/sparkle-os/
+_MODULE_DIR = '/usr/share/sparkle-os/netnumber-links'
+if _MODULE_DIR not in sys.path:
+    sys.path.insert(0, _MODULE_DIR)
+
+try:
+    from main import main
+except ImportError as e:
+    print(f"Errore: impossibile caricare il modulo netnumber-links.\n{e}")
+    sys.exit(1)
+
+if __name__ == '__main__':
+    main()

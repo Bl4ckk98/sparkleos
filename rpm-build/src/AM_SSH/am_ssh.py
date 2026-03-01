@@ -1,0 +1,87 @@
+# FILE: am_ssh.py
+# Francesco Guida
+
+import subprocess
+
+def main_menu():
+    hosts = {
+        # MASTER
+        "1": "172.16.165.232", # CATANIA 1
+        "2": "20.32.191.242", # MILANO 1
+        "3": "172.16.165.245", # CATANIA 2
+        "4": "20.32.191.248", # MILANO 2
+        # DRA
+        "5": "172.16.165.233", # CATANIA DRA 1
+        "6": "172.16.165.234", # CATANIA DRA 2
+        "7": "20.32.191.243", # MILANO DRA 1
+        "8": "20.32.191.244", # MILANO DRA 2
+        "9": "20.78.191.233", # NEWYORK DRA 1
+        "10": "20.78.191.234", # NEWYORK DRA 2
+        "11": "20.82.191.233", # MIAMI DRA 1
+        "12": "20.82.191.234", # MIAMI DRA 2
+        # STP
+        "13": "172.16.165.238", # CT STP 3
+        "14": "172.16.165.244", # CT STP 4
+        "15": "20.32.191.246", # MILANO STP 3
+        "16": "20.32.191.247", # MILANO STP 4
+        # VARIE
+        "17": "172.16.166.199", # EMS
+    }
+    
+    while True:
+        print("===================================")
+        print("===           MASTER            ===")
+        print("===================================")
+        print("|1- Catania 1          2- Milano 1|")
+        print("|3- Catania 2          4- Milano 2|")
+        print("===================================")
+        print("===            DRA              ===")
+        print("===================================")
+        print("|5- Catania 1         6- Catania 2|")
+        print("|7- Milano 1          8- Milano 2 |")
+        print("|9- NewYork 1        10- NewYork 2|")
+        print("|11- Miami 1           12- Miami 2|")
+        print("===================================")
+        print("===            STP              ===")
+        print("===================================")
+        print("|13- Catania 3       14- Catania 4|")
+        print("|15- Milano 3         16- Milano 4|")
+        print("===================================")
+        print("===           VARIE             ===")
+        print("===================================")
+        print("|17- EMS                          |")
+        print("===================================")
+        print(" E - Esci")
+        
+        scelta = input("Inserisci il numero della macchina (o 'E' per uscire): ").strip()
+        if scelta.lower() == 'e':
+            print("Uscita dallo script.")
+            break
+        
+        if scelta not in hosts:
+            print("Scelta non valida. Riprova.")
+            continue
+        
+        host = hosts[scelta]
+        matricola = input(f"Inserisci la tua matricola: ").strip()
+        if not matricola:
+            print("Matricola non valida. Ritorno al menu principale.")
+            continue
+        username = input(f"Inserisci l'username (es am_usrX): ").strip()
+        if not matricola:
+            print("Username non valido. Ritorno al menu principale.")
+            continue
+        ssh_command = f"ssh {matricola}@{username}@{host}#22@10.111.59.9"
+        print(f"\nAvvio della connessione. Inserisci la tua password di IAM appena viene richiesta.")
+        
+        try:
+            subprocess.run(ssh_command, shell=True)
+            print("Sessione SSH terminata, ritorno al menu principale.")
+        except KeyboardInterrupt:
+            print("\nConnessione interrotta dall'utente. Ritorno al menu principale.")
+        except Exception as e:
+            print("Si è verificato un errore durante la connessione SSH:", e)
+            print("Ritorno al menu principale.")
+            
+if __name__ == '__main__':
+    main_menu()

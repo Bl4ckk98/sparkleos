@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+# sparkle-loop-checker — Rilevamento loop su tracce TCAP (pcap.json)
+# Analizza i Transaction ID e segnala loop tramite threshold configurabile
+
+import time
+from collections import defaultdict
+from colorama import Fore, init
+
+init(autoreset=True)
+
+
+def get_threshold() -> int:
+    while True:
+        try:
+            threshold = int(input("Inserisci un threshold (valore minimo 2): "))
+            if threshold <= 1:
+                raise ValueError("Il threshold deve essere maggiore di 1.")
+            return threshold
+        except ValueError as e:
+            print(f"Errore: {e}")
+
+
+def extract_transaction_ids(text_file: str, threshold: int):
+    try:
+        print("Lettura del file in corso...")
+        with open(text_file, 'r', encoding='utf-8', errors='ignore') as f:
+            text = f.read()
+    except FileNotFoundError as e:
+        print(f"Errore: {e}")
+        time.sleep(5)
+        return None, False
+
+    print("Estrazione dei Transaction ID...")
+    transaction_ids: dict[str, int] = defaultdict(int)
+    for line in text.split('\n'):
+        if 'tcap.tid' in line:
+            tid = line.split('tcap.tid":')[-1].strip().strip('",')
+            transaction_ids[tid] += 1
+
+    loop_found = any(freq > threshold for freq in transaction_ids.values())
+    if loop_found:
+        print(Fore.RED + "⚠  Loop rilevato con il threshold selezionato.")
+    else:
+        print(Fore.GREEN + "✓  Nessun loop trovato con il threshold selezionato.")
+
+    return transaction_ids, loop_found
+
+
+def write_results(transaction_ids: dict, threshold: int, output_file: str) -> None:
+    print("Ordinamento e scrittura risultati...")
+    sorted_tids = sorted(transaction_ids.items(), key=lambda x: x[1], reverse=True)
+    with open(output_file, 'w') as f:
+        for tid, freq in sorted_tids:
+            if freq > threshold:
+                f.write(f"Transaction ID {tid} — occorrenze: {freq}\n")
+
+
+def main():
+    text_file   = 'pcap.json'
+    output_file = 'output.txt'
+
+    while True:
+        threshold = get_threshold()
+        transaction_ids, loop_found = extract_transaction_ids(text_file, threshold)
+
+        if transaction_ids is not None and loop_found:
+            write_results(transaction_ids, threshold, output_file)
+            print(f"Risultati salvati in: {output_file}")
+            time.sleep(5)
+            break
+        elif transaction_ids is not None and not loop_found:
+            time.sleep(5)
+            break
+
+
+if __name__ == '__main__':
+    main()

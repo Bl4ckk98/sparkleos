@@ -1,0 +1,124 @@
+# ============================================================
+# SparkleOS CI/CD — Build RPM e upload su Fedora Copr
+# Si attiva ad ogni push sul branch main.
+# ============================================================
+#name: Build & Publish SparkleOS RPM
+#
+#on:
+#  push:
+#    branches: [ "main" ]
+#  workflow_dispatch:     # consente lancio manuale dalla UI GitHub
+#
+#jobs:
+#  build-and-publish:
+#    name: Build RPM → Copr
+#    runs-on: ubuntu-latest
+#    container:
+#      image: fedora:42    # container Fedora per compatibilità RPM
+#
+#    steps:
+#      # --------------------------------------------------------
+#      # 1. Checkout del codice
+#      # --------------------------------------------------------
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      # --------------------------------------------------------
+#      # 2. Installa dipendenze di build
+#      # --------------------------------------------------------
+#      - name: Install build tools
+#        run: |
+#          dnf install -y \
+#            rpm-build \
+#            rpmdevtools \
+#            python3-colorama \
+#            python3-tkinter \
+#            copr-cli \
+#            tar \
+#            git
+#
+#      # --------------------------------------------------------
+#      # 3. Estrai la versione dallo spec e crea il tarball
+#      # --------------------------------------------------------
+#      - name: Extract version from spec
+#        id: version
+#        run: |
+#          VERSION=$(grep '^Version:' rpm-build/sparkle-os.spec | awk '{print $2}')
+#          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+#          echo "Building sparkle-os-$VERSION"
+#
+#      - name: Setup rpmbuild tree
+#        run: rpmdev-setuptree
+#
+#      - name: Create source tarball
+#        run: |
+#          VERSION=${{ steps.version.outputs.version }}
+#          tar czf ~/rpmbuild/SOURCES/sparkle-os-${VERSION}.tar.gz \
+#            --transform="s|^|sparkle-os-${VERSION}/|" \
+#            rpm-build/src/ \
+#            assets/
+#          echo "Tarball contents:"
+#          tar tzf ~/rpmbuild/SOURCES/sparkle-os-${VERSION}.tar.gz | head -30
+#
+#      # --------------------------------------------------------
+#      # 4. Build SRPM + RPM
+#      # --------------------------------------------------------
+#      - name: Copy spec
+#        run: cp rpm-build/sparkle-os.spec ~/rpmbuild/SPECS/
+#
+#      - name: Build SRPM
+#        run: |
+#          rpmbuild -bs ~/rpmbuild/SPECS/sparkle-os.spec
+#          echo "SRPM:"
+#          ls ~/rpmbuild/SRPMS/
+#
+#      - name: Build binary RPM (smoke test)
+#        run: |
+#          rpmbuild -bb ~/rpmbuild/SPECS/sparkle-os.spec
+#          echo "RPM:"
+#          ls ~/rpmbuild/RPMS/noarch/
+#          rpm -qpl ~/rpmbuild/RPMS/noarch/sparkle-os-*.rpm
+#
+#      # --------------------------------------------------------
+#      # 5. Upload SRPM su Fedora Copr
+#      # --------------------------------------------------------
+#      - name: Configure Copr CLI
+#        env:
+#          COPR_LOGIN:    ${{ secrets.COPR_LOGIN }}
+#          COPR_TOKEN:    ${{ secrets.COPR_TOKEN }}
+#          COPR_USERNAME: ${{ secrets.COPR_USERNAME }}
+#        run: |
+#          mkdir -p ~/.config
+#          cat > ~/.config/copr << EOF
+#          [copr-cli]
+#          login    = ${COPR_LOGIN}
+#          username = ${COPR_USERNAME}
+#          token    = ${COPR_TOKEN}
+#          copr_url = https://copr.fedorainfracloud.org
+#          EOF
+#
+#      - name: Upload SRPM to Copr
+#        env:
+#          COPR_USERNAME: ${{ secrets.COPR_USERNAME }}
+#        run: |
+#          SRPM=$(ls ~/rpmbuild/SRPMS/sparkle-os-*.src.rpm)
+#          echo "Uploading: $SRPM"
+#          copr-cli build \
+#            --chroot fedora-42-x86_64 \
+#            ${COPR_USERNAME}/sparkle-os \
+#            "$SRPM" \
+#            --nowait
+#          echo "Build submitted to Copr!"
+#
+#      # --------------------------------------------------------
+#      # 6. Salva gli artefatti nella run GitHub
+#      # --------------------------------------------------------
+#      - name: Upload artifacts
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: sparkle-os-rpms
+#          path: |
+#            ~/rpmbuild/RPMS/noarch/*.rpm
+#            ~/rpmbuild/SRPMS/*.src.rpm
+#          retention-days: 30

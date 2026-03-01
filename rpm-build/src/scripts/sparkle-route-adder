@@ -1,0 +1,153 @@
+#!/usr/bin/env python3
+# sparkle-route-adder — GUI per generare comandi di routing per i nodi aziendali
+# Richiede: python3-tkinter, customtkinter (pip install customtkinter)
+
+import customtkinter as ctk
+from tkinter import messagebox
+import re
+import subprocess
+
+# ---------------------------------------------------------------------------
+# Tema
+# ---------------------------------------------------------------------------
+ctk.set_appearance_mode("Dark")
+ctk.set_default_color_theme("blue")
+
+# ---------------------------------------------------------------------------
+# Validazione / Sanitizzazione
+# ---------------------------------------------------------------------------
+_IPv4_PATTERN = re.compile(
+    r"^(25[0-5]|2[0-4]\d|[01]?\d\d?)\."
+    r"(25[0-5]|2[0-4]\d|[01]?\d\d?)\."
+    r"(25[0-5]|2[0-4]\d|[01]?\d\d?)\."
+    r"(25[0-5]|2[0-4]\d|[01]?\d\d?)$"
+)
+
+def is_valid_ipv4(ip: str) -> bool:
+    return _IPv4_PATTERN.match(ip.strip()) is not None
+
+# ---------------------------------------------------------------------------
+# Gateway / Interfacce — mappati dalla documentazione di flussi
+# ---------------------------------------------------------------------------
+GATEWAY_IFACE = {
+    "CATANIA STP":  {"primary": ("10.15.86.161", "eth3"), "secondary": ("10.15.86.177", "eth4")},
+    "MILANO STP":   {"primary": ("10.17.87.36",  "eth3"), "secondary": ("10.17.87.52",  "eth4")},
+    "CATANIA DRA":  {"primary": ("10.15.86.225", "eth1"), "secondary": ("10.15.86.241", "eth2")},
+    "MILANO DRA":   {"primary": ("10.17.87.100", "eth1"), "secondary": ("10.17.87.116", "eth2")},
+    "NEW YORK DRA": {"primary": ("10.18.87.161", "eth1"), "secondary": ("10.18.87.177", "eth2")},
+    "MIAMI DRA":    {"primary": ("10.16.87.129", "eth1"), "secondary": ("10.16.87.145", "eth2")},
+}
+
+# ---------------------------------------------------------------------------
+# Logica di generazione batch
+# ---------------------------------------------------------------------------
+ip_entry_widgets: dict = {}
+
+def create_batch_action():
+    client_name = client_entry.get().strip().upper()
+    if not client_name:
+        messagebox.showerror("Errore", "Il nome del cliente è obbligatorio.")
+        return
+
+    filename = f"{client_name}_commands.txt"
+    lines_written = 0
+
+    with open(filename, 'w') as f:
+        for section_title, entries in ip_entry_widgets.items():
+            base_key = section_title[:-2]          # Es. "CATANIA STP 3" → "CATANIA STP"
+            comment_written = {"primary": False, "secondary": False}
+
+            for entry_type, widget in entries.items():
+                ips = [ip.strip() for ip in widget.get().split(',')]
+                for ip in ips:
+                    if not is_valid_ipv4(ip):
+                        continue
+                    gateway, iface = GATEWAY_IFACE[base_key][entry_type]
+                    if not comment_written[entry_type]:
+                        f.write(f"{section_title} ({entry_type})\n")
+                        f.write(f'echo "# {client_name}" >> /etc/sysconfig/network-scripts/route-{iface}\n')
+                        comment_written[entry_type] = True
+
+                    f.write(f"sudo route add {ip} gw {gateway} dev {iface}\n")
+                    if "STP" in base_key:
+                        f.write(f'echo "{ip}/32 via {gateway} dev {iface}" >> /etc/sysconfig/network-scripts/route-{iface}\n\n')
+                    else:
+                        f.write(f'echo "{ip}/32 via {gateway}" >> /etc/sysconfig/network-scripts/route-{iface}\n\n')
+                    lines_written += 1
+
+    if lines_written == 0:
+        messagebox.showerror("Errore", "Inserire almeno un indirizzo IP valido.")
+        return
+
+    messagebox.showinfo("Successo", f"Batch salvato in: {filename}")
+    subprocess.run(['xdg-open', filename])
+
+# ---------------------------------------------------------------------------
+# GUI
+# ---------------------------------------------------------------------------
+root = ctk.CTk()
+root.title("SparkleOS — Route Adder")
+root.geometry("720x820")
+root.resizable(False, False)
+
+def add_label(text: str, parent) -> None:
+    ctk.CTkLabel(parent, text=text, anchor='center', wraplength=680).pack(
+        side='top', fill='x', padx=10, pady=5
+    )
+
+# Descrizione
+desc_frame = ctk.CTkFrame(root)
+desc_frame.pack(fill='x', padx=10, pady=20)
+add_label(
+    "Inserisci gli IP del cliente nel nodo corrispondente.\n"
+    "Campo SINISTRO = GW primario  |  Campo DESTRO = GW secondario\n"
+    "Più IP vanno separati da virgola.",
+    desc_frame
+)
+
+# Nome cliente
+cf = ctk.CTkFrame(root)
+cf.pack(pady=10, fill='x', padx=20)
+ctk.CTkLabel(cf, text="NOME CLIENTE").pack(side='left', padx=10)
+client_entry = ctk.CTkEntry(cf)
+client_entry.pack(side='left', fill='x', expand=True)
+
+def add_subsection(title: str, parent) -> None:
+    frame = ctk.CTkFrame(parent)
+    frame.pack(side='left', fill='both', expand=True, padx=10, pady=5)
+    ctk.CTkLabel(frame, text=title).pack(side='top', padx=10)
+    pri = ctk.CTkEntry(frame, placeholder_text="GW primario")
+    pri.pack(side='left', expand=True, padx=5)
+    sec = ctk.CTkEntry(frame, placeholder_text="GW secondario")
+    sec.pack(side='left', expand=True, padx=5)
+    ip_entry_widgets[title] = {"primary": pri, "secondary": sec}
+
+def add_row(titles: list[str], parent) -> None:
+    row = ctk.CTkFrame(parent)
+    row.pack(fill='x', expand=True, pady=5)
+    for t in titles:
+        add_subsection(t, row)
+
+# STP
+stp_frame = ctk.CTkFrame(root)
+stp_frame.pack(fill='x', expand=True, padx=10, pady=10)
+add_label("— STP —", stp_frame)
+add_row(["CATANIA STP 3", "CATANIA STP 4"], stp_frame)
+add_row(["MILANO STP 3",  "MILANO STP 4"],  stp_frame)
+
+# DRA
+dra_frame = ctk.CTkFrame(root)
+dra_frame.pack(fill='x', expand=True, padx=10, pady=10)
+add_label("— DRA —", dra_frame)
+add_row(["CATANIA DRA 1",  "CATANIA DRA 2"],  dra_frame)
+add_row(["MILANO DRA 1",   "MILANO DRA 2"],   dra_frame)
+add_row(["NEW YORK DRA 1", "NEW YORK DRA 2"], dra_frame)
+add_row(["MIAMI DRA 1",    "MIAMI DRA 2"],    dra_frame)
+
+# Pulsante
+btn_frame = ctk.CTkFrame(root)
+btn_frame.pack(fill='x', expand=True, padx=10, pady=5)
+ctk.CTkButton(btn_frame, text="CREA BATCH", corner_radius=10,
+              command=create_batch_action).pack(side='top', pady=5)
+
+root.mainloop()
