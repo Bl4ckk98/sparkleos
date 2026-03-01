@@ -110,35 +110,38 @@ jobs:
 
   # ============================================================
   # JOB 2: Build ISO con livemedia-creator
-  # Gira su runner Linux nativo (non container) per accesso
-  # ai loop devices necessari a losetup/livemedia-creator.
+  # Gira dentro un container Fedora 42 nativo GHA (privileged)
+  # per accesso ai loop devices — nessun podman richiesto.
   # ============================================================
   build-iso:
     name: Build ISO
-    runs-on: ubuntu-latest   # VM nativa Ubuntu - loop devices disponibili
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:42
+      options: --privileged --device /dev/loop-control
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install lorax and dependencies
-        run: |
-          # Su Ubuntu usiamo un container Fedora via podman con privilegi
-          # perché lorax/livemedia-creator è specifico per Fedora/DNF
-          sudo apt-get update -qq
-          sudo apt-get install -y podman
+      - name: Cache DNF packages
+        uses: actions/cache@v4
+        with:
+          path: .dnf-cache
+          key: dnf-fedora42-${{ hashFiles('sparkle-os.ks') }}
+          restore-keys: |
+            dnf-fedora42-
 
-      - name: Build ISO via privileged Fedora container
+      - name: Install build dependencies
         run: |
-          sudo podman run --rm --privileged \
-            --device /dev/loop-control \
-            -v "${{ github.workspace }}:/project:z" \
-            -w /project \
-            fedora:42 bash -c "
-              set -e
-              dnf install -y lorax anaconda-tui
-              bash build-iso.sh
-            "
+          dnf install -y \
+            lorax \
+            anaconda-tui \
+            --setopt=cachedir=${{ github.workspace }}/.dnf-cache \
+            --setopt=keepcache=1
+
+      - name: Build ISO
+        run: bash build-iso.sh
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
@@ -147,3 +150,12 @@ jobs:
           path: output/*.iso
           retention-days: 7
           if-no-files-found: error
+
+      - name: Upload build log (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sparkleos-build-log
+          path: output/livemedia.log
+          retention-days: 7
+          if-no-files-found: ignore

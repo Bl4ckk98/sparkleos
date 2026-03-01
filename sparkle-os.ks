@@ -12,6 +12,10 @@ timezone Europe/Rome --utc
 network --bootproto=dhcp --device=link --activate
 network --hostname=sparkle-workstation
 
+# ------ Utenti -----------------------------------------------
+rootpw --lock
+user --name=liveuser --gecos="Live User" --password=liveuser --plaintext --groups=wheel
+
 # ------ Bootloader -------------------------------------------
 bootloader --location=mbr
 
@@ -22,6 +26,9 @@ part / --size=8192 --fstype=ext4
 # ------ Modalità grafica e DE --------------------------------
 xconfig --startxonboot
 skipx
+
+# ------ Fine Installazione -----------------------------------
+reboot
 
 # ============================================================
 # REPOSITORY
