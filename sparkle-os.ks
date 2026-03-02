@@ -20,12 +20,10 @@ user --name=liveuser --gecos="Live User" --password=liveuser --plaintext --group
 bootloader --location=mbr
 
 # ------ Partizionamento (minimale per ISO live) ---------------
-clearpart --all --initlabel
-part / --size=8192 --fstype=ext4
+# clearpart e part rimossi perché si tratta di livemedia/lorax
 
 # ------ Modalità grafica e DE --------------------------------
 xconfig --startxonboot
-skipx
 
 # ------ Fine Installazione -----------------------------------
 reboot
@@ -40,8 +38,8 @@ url --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=fedora-42&arc
 repo --name=fedora-updates --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f42&arch=$basearch
 
 # Copr bl4ckk/sparkle-os
-# NOTA: in CI questa repo è pronta perché build-iso parte dopo build-rpm.
-# Per test locali, commentare le 2 righe seguenti:
+# NOTA: Per il build usiamo lo static url del repo, ma per l'installato
+# dovresti scaricare il file .repo con la GPG key da COPR in %post o includerlo nel pacchetto
 repo --name=copr-sparkle-os --baseurl=https://download.copr.fedorainfracloud.org/results/bl4ckk/sparkle-os/fedora-42-x86_64/
 
 # ============================================================
@@ -49,7 +47,6 @@ repo --name=copr-sparkle-os --baseurl=https://download.copr.fedorainfracloud.org
 # ============================================================
 %packages
 # Pacchetto aziendale SparkleOS (dal Copr)
-# NOTA: commentare per test locali se COPR non è ancora pronto
 sparkle-os
 
 # Pacchetto richiesto per Live ISO

@@ -55,6 +55,8 @@ for script in \
     sparkle-am-ssh \
     sparkle-loop-checker \
     sparkle-netnumber-links; do
+  # NOTA: Assumiamo che il tarball contenga il path 'rpm-build/src/scripts/' intatto.
+  # Se la fase di pacchettizzazione (CI) cambia la struttura, questo comando fallirà.
   install -m 0755 rpm-build/src/scripts/${script} \
     %{buildroot}%{_bindir}/${script}
 done
@@ -71,6 +73,9 @@ install -m 0644 assets/background.jpg \
 
 # --- Profilo VPN NetworkManager/libreswan ----------------------------------
 install -d %{buildroot}/etc/NetworkManager/system-connections
+# ATTENZIONE (Sicurezza): Il file nmconnection viene installato con permessi 0600 come richiesto da NM.
+# Tuttavia, se tisparkle.nmconnection contiene segreti (PSK, XAuth) e il repo Git è pubblico,
+# si stanno esponendo credenziali in chiaro. 
 install -m 0600 assets/tisparkle.nmconnection \
   %{buildroot}/etc/NetworkManager/system-connections/tisparkle.nmconnection
 
