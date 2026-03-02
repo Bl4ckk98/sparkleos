@@ -65,7 +65,7 @@ if [ ! -e /dev/loop-control ] || ! command -v livemedia-creator &>/dev/null; the
     quay.io/fedora/fedora:41 \
     bash -c "
       echo '=> Installazione dipendenze per livemedia-creator...'
-      dnf install -y lorax anaconda-tui dbus-daemon > /dev/null
+      dnf install -y lorax anaconda-tui pykickstart dbus-daemon > /dev/null
       
       echo '=> Avvio dbus-daemon...'
       mkdir -p /var/run/dbus
@@ -124,10 +124,20 @@ info "Log:        ${LOG_FILE}"
 info "Cache DNF:  ${DNF_CACHE_DIR}/"
 echo ""
 
+# ------ Appiattisci il kickstart (risolve tutti gli %include) --------
+KS_FLAT="${TMP_DIR}/sparkle-os-flat.ks"
+info "Appiattimento kickstart con ksflatten..."
+if ! command -v ksflatten &>/dev/null; then
+  error "ksflatten non trovato. Installa: dnf install pykickstart"
+  exit 1
+fi
+ksflatten --config "${SCRIPT_DIR}/sparkle-os.ks" -o "${KS_FLAT}"
+success "Kickstart appiattito in: ${KS_FLAT}"
+echo ""
+
 # ------ Lancia livemedia-creator -----------------------------
 livemedia-creator \
-  --ks="${SCRIPT_DIR}/sparkle-os.ks" \
-  --ks-dir="${SCRIPT_DIR}/ks" \
+  --ks="${KS_FLAT}" \
   --no-virt \
   --resultdir="${OUTPUT_DIR}" \
   --project="SparkleOS" \

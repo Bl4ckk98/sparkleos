@@ -1,26 +1,30 @@
 # ============================================================
 # SparkleOS - Kickstart per Fedora 42 KDE
 # ============================================================
-# Basato sulla gerarchia ufficiale Fedora KDE Spin:
-#   fedora-live-kde-base.ks
-#     └── fedora-live-base.ks   (livesys, dracut-live, impostazioni base)
-#     └── fedora-kde-common.ks  (KDE Plasma + gruppi ufficiali)
-#   fedora-live-minimization.ks
+# Basato sulla gerarchia ufficiale Fedora KDE Spin.
+# I file base nella cartella ks/ gestiscono:
+#   - setup livesys (livesys.service, livesys-late.service)
+#   - dracut-live
+#   - pacchetti KDE Plasma
+#   - pulizia post-install standard
+# Qui definiamo SOLO le personalizzazioni SparkleOS.
 # ============================================================
 
 %include ks/fedora-live-kde-base.ks
 %include ks/fedora-live-minimization.ks
 
-# ------ Override: Lingua e tastiera italiana ------------------
+# ------ Override lingua/tastiera/timezone (sovrascrivono en_US) --
 lang it_IT.UTF-8
 keyboard --vckeymap=it --xlayouts='it'
 timezone Europe/Rome --utc
 
-# ------ Override: Utente live SparkleOS ----------------------
-rootpw --lock
+# ------ Override: shutdown -> reboot per la live --
+reboot
+
+# ------ Override utente live SparkleOS ----------------------
 user --name=liveuser --gecos="Live User" --password=liveuser --plaintext --groups=wheel
 
-# ------ Override: Dimensione partizione ----------------------
+# ------ Override dimensione partizione ----------------------
 part / --size=8192 --fstype=ext4
 
 # ============================================================
@@ -52,21 +56,19 @@ NetworkManager-libreswan
 
 %end
 
-
 # ============================================================
 # %post - Personalizzazioni SparkleOS
 # ============================================================
 %post --erroronfail
 
-# ---- Sessione livesys: imposta KDE (già fatto in kde-base ma ripetiamo per sicurezza)
+# ---- Sessione livesys: KDE ----
 sed -i 's/^livesys_session=.*/livesys_session="kde"/' /etc/sysconfig/livesys
 
-# ---- Sfondo KDE per nuovi utenti (via /etc/skel) ---------------
+# ---- Sfondo KDE per nuovi utenti (via /etc/skel) ----
 mkdir -p /etc/skel/.config/plasma-workspace/env
 
 cat > /etc/skel/.config/plasma-workspace/env/set-wallpaper.sh << 'PLASMA_SCRIPT'
 #!/bin/bash
-# Applica lo sfondo SparkleOS alla sessione KDE Plasma corrente
 if [ "$XDG_SESSION_DESKTOP" = "KDE" ] || [ "$XDG_SESSION_DESKTOP" = "plasma" ]; then
   qdbus org.kde.plasmashell /PlasmaShell \
     org.kde.PlasmaShell.evaluateScript "

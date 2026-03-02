@@ -137,6 +137,7 @@ jobs:
           dnf install -y \
             lorax \
             anaconda-tui \
+            pykickstart \
             --setopt=cachedir=${{ github.workspace }}/.dnf-cache \
             --setopt=keepcache=1
 
