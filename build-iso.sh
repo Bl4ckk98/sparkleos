@@ -127,6 +127,7 @@ echo ""
 # ------ Lancia livemedia-creator -----------------------------
 livemedia-creator \
   --ks="${SCRIPT_DIR}/sparkle-os.ks" \
+  --ks-dir="${SCRIPT_DIR}/ks" \
   --no-virt \
   --resultdir="${OUTPUT_DIR}" \
   --project="SparkleOS" \

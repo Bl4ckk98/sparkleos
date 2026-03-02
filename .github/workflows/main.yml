@@ -110,7 +110,7 @@ jobs:
   # ============================================================
   # JOB 2: Build ISO con livemedia-creator
   # Gira dentro un container Fedora 42 nativo GHA (privileged)
-  # per accesso ai loop devices - nessun podman richiesto.
+  # per accesso ai loop devices - nessun container richiesto.
   # ============================================================
   build-iso:
     name: Build ISO

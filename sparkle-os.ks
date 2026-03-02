@@ -1,63 +1,34 @@
 # ============================================================
 # SparkleOS - Kickstart per Fedora 42 KDE
-# Genera una ISO personalizzata con pacchetti e VPN aziendali
+# ============================================================
+# Basato sulla gerarchia ufficiale Fedora KDE Spin:
+#   fedora-live-kde-base.ks
+#     └── fedora-live-base.ks   (livesys, dracut-live, impostazioni base)
+#     └── fedora-kde-common.ks  (KDE Plasma + gruppi ufficiali)
+#   fedora-live-minimization.ks
 # ============================================================
 
-# ------ Lingua e tastiera ------------------------------------
+%include ks/fedora-live-kde-base.ks
+%include ks/fedora-live-minimization.ks
+
+# ------ Override: Lingua e tastiera italiana ------------------
 lang it_IT.UTF-8
 keyboard --vckeymap=it --xlayouts='it'
 timezone Europe/Rome --utc
 
-# ------ Rete -------------------------------------------------
-network --bootproto=dhcp --device=link --activate
-network --hostname=sparkle-workstation
-
-# ------ Utenti -----------------------------------------------
+# ------ Override: Utente live SparkleOS ----------------------
 rootpw --lock
 user --name=liveuser --gecos="Live User" --password=liveuser --plaintext --groups=wheel
 
-# ------ Bootloader -------------------------------------------
-bootloader --location=mbr
-
-# ------ Partizionamento (minimale per ISO live) ---------------
-clearpart --all --initlabel
+# ------ Override: Dimensione partizione ----------------------
 part / --size=8192 --fstype=ext4
 
-# ------ Modalità grafica e DE --------------------------------
-xconfig --startxonboot
-
-# ------ Fine Installazione -----------------------------------
-reboot
-
 # ============================================================
-# REPOSITORY
-# ============================================================
-
-# Fedora 42 - repo ufficiale
-url --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=fedora-42&arch=$basearch
-
-repo --name=fedora-updates --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f42&arch=$basearch
-
-# Copr bl4ckk/sparkle-os
-# NOTA PER ME STESSO: Per il build usiamo lo static url del repo, ma per l'installato
-# devo ricordarmi di scaricare il file .repo con la GPG key da COPR in %post o includerlo nel pacchetto
-repo --name=copr-sparkle-os --baseurl=https://download.copr.fedorainfracloud.org/results/bl4ckk/sparkle-os/fedora-42-x86_64/
-
-# ============================================================
-# PACCHETTI
+# PACCHETTI SPARKLE-OS
 # ============================================================
 %packages
 # Pacchetto aziendale SparkleOS (dal Copr)
 sparkle-os
-
-# Pacchetti richiesti per Live ISO
-dracut-live
-shim-x64
-grub2-efi-x64
-grub2-efi-x64-cdboot
-grub2-efi-x64-modules
-grub2-pc
-grub2-pc-modules
 
 # Tool di base
 vim
@@ -69,32 +40,28 @@ wget
 bash-completion
 net-tools
 
-# Installer e sistema base
-kernel
-anaconda
-anaconda-live
+# Localizzazione italiana
 langpacks-it
 
 # Dipendenze Python per gli script SparkleOS
-python3
 python3-colorama
 python3-openpyxl
 
-# VPN IKEv1 PSK+XAuth via NetworkManager nativo
+# VPN IKEv1 PSK+XAuth via NetworkManager
 NetworkManager-libreswan
-
-# KDE Plasma - DE principale SparkleOS
-@kde-desktop-environment
 
 %end
 
+
 # ============================================================
-# %post - Configurazione post-installazione
+# %post - Personalizzazioni SparkleOS
 # ============================================================
 %post --erroronfail
 
+# ---- Sessione livesys: imposta KDE (già fatto in kde-base ma ripetiamo per sicurezza)
+sed -i 's/^livesys_session=.*/livesys_session="kde"/' /etc/sysconfig/livesys
+
 # ---- Sfondo KDE per nuovi utenti (via /etc/skel) ---------------
-# Ogni nuovo utente creato sul sistema erediterà questo wallpaper al primo login.
 mkdir -p /etc/skel/.config/plasma-workspace/env
 
 cat > /etc/skel/.config/plasma-workspace/env/set-wallpaper.sh << 'PLASMA_SCRIPT'
