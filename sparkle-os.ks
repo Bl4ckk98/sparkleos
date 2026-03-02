@@ -1,5 +1,5 @@
 # ============================================================
-# SparkleOS — Kickstart per Fedora 42 KDE
+# SparkleOS - Kickstart per Fedora 42 KDE
 # Genera una ISO personalizzata con pacchetti e VPN aziendali
 # ============================================================
 
@@ -33,14 +33,14 @@ reboot
 # REPOSITORY
 # ============================================================
 
-# Fedora 42 — repo ufficiale
+# Fedora 42 - repo ufficiale
 url --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=fedora-42&arch=$basearch
 
 repo --name=fedora-updates --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f42&arch=$basearch
 
 # Copr bl4ckk/sparkle-os
-# NOTA: Per il build usiamo lo static url del repo, ma per l'installato
-# dovresti scaricare il file .repo con la GPG key da COPR in %post o includerlo nel pacchetto
+# NOTA PER ME STESSO: Per il build usiamo lo static url del repo, ma per l'installato
+# devo ricordarmi di scaricare il file .repo con la GPG key da COPR in %post o includerlo nel pacchetto
 repo --name=copr-sparkle-os --baseurl=https://download.copr.fedorainfracloud.org/results/bl4ckk/sparkle-os/fedora-42-x86_64/
 
 # ============================================================
@@ -50,8 +50,14 @@ repo --name=copr-sparkle-os --baseurl=https://download.copr.fedorainfracloud.org
 # Pacchetto aziendale SparkleOS (dal Copr)
 sparkle-os
 
-# Pacchetto richiesto per Live ISO
+# Pacchetti richiesti per Live ISO
 dracut-live
+shim-x64
+grub2-efi-x64
+grub2-efi-x64-cdboot
+grub2-efi-x64-modules
+grub2-pc
+grub2-pc-modules
 
 # Tool di base
 vim
@@ -63,6 +69,12 @@ wget
 bash-completion
 net-tools
 
+# Installer e sistema base
+kernel
+anaconda
+anaconda-live
+langpacks-it
+
 # Dipendenze Python per gli script SparkleOS
 python3
 python3-colorama
@@ -71,13 +83,13 @@ python3-openpyxl
 # VPN IKEv1 PSK+XAuth via NetworkManager nativo
 NetworkManager-libreswan
 
-# KDE Plasma — DE principale SparkleOS
+# KDE Plasma - DE principale SparkleOS
 @kde-desktop-environment
 
 %end
 
 # ============================================================
-# %post — Configurazione post-installazione
+# %post - Configurazione post-installazione
 # ============================================================
 %post --erroronfail
 

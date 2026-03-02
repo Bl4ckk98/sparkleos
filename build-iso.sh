@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# SparkleOS — Build ISO
+# SparkleOS - Build ISO
 # Richiede: root, lorax, anaconda-tui (su Fedora host)
 # ============================================================
 
@@ -102,7 +102,7 @@ mkdir -p "${TMP_DIR}"
 # ------ Cache DNF persistente --------------------------------
 mkdir -p "${DNF_CACHE_DIR}"
 if [ -d "${DNF_CACHE_DIR}" ] && [ "$(ls -A "${DNF_CACHE_DIR}" 2>/dev/null)" ]; then
-  success "Cache DNF trovata in ${DNF_CACHE_DIR} — i pacchetti già scaricati verranno riutilizzati."
+  success "Cache DNF trovata in ${DNF_CACHE_DIR} - i pacchetti già scaricati verranno riutilizzati."
 else
   warn "Prima build: la cache DNF verrà popolata in ${DNF_CACHE_DIR}."
 fi
@@ -115,7 +115,7 @@ fi
 
 echo ""
 echo -e "${BOLD}============================================================${RESET}"
-echo -e "${BOLD}  SparkleOS ISO Build — $(date '+%Y-%m-%d %H:%M:%S')${RESET}"
+echo -e "${BOLD}  SparkleOS ISO Build - $(date '+%Y-%m-%d %H:%M:%S')${RESET}"
 echo -e "${BOLD}============================================================${RESET}"
 echo ""
 info "Kickstart:  ${SCRIPT_DIR}/sparkle-os.ks"

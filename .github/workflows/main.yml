@@ -1,5 +1,5 @@
 # ============================================================
-# SparkleOS CI/CD — Build RPM, upload su Fedora Copr, build ISO
+# SparkleOS CI/CD - Build RPM, upload su Fedora Copr, build ISO
 # Si attiva ad ogni push sul branch main.
 # ============================================================
 name: Build & Publish SparkleOS
@@ -110,7 +110,7 @@ jobs:
   # ============================================================
   # JOB 2: Build ISO con livemedia-creator
   # Gira dentro un container Fedora 42 nativo GHA (privileged)
-  # per accesso ai loop devices — nessun podman richiesto.
+  # per accesso ai loop devices - nessun podman richiesto.
   # ============================================================
   build-iso:
     name: Build ISO

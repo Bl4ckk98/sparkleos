@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# sparkle-am-ssh — SSH helper per accesso rapido ai nodi aziendali
+# sparkle-am-ssh - SSH helper per accesso rapido ai nodi aziendali
 # Francesco Guida
 
 import subprocess

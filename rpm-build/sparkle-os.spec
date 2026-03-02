@@ -33,19 +33,19 @@ Pacchetto unificato SparkleOS. Include:
   - Profilo VPN             : /etc/NetworkManager/system-connections/tisparkle.nmconnection
 
 # =========================================================================
-# %prep — estrai il tarball nella BUILD dir
+# %prep - estrai il tarball nella BUILD dir
 # =========================================================================
 %prep
 %autosetup
 
 # =========================================================================
-# %build — nessuna compilazione (Python puro)
+# %build - nessuna compilazione (Python puro)
 # =========================================================================
 %build
 # nothing to do
 
 # =========================================================================
-# %install — popola il buildroot
+# %install - popola il buildroot
 # =========================================================================
 %install
 # --- Binari in /usr/bin/ ---------------------------------------------------
@@ -73,14 +73,11 @@ install -m 0644 assets/background.jpg \
 
 # --- Profilo VPN NetworkManager/libreswan ----------------------------------
 install -d %{buildroot}/etc/NetworkManager/system-connections
-# ATTENZIONE (Sicurezza): Il file nmconnection viene installato con permessi 0600 come richiesto da NM.
-# Tuttavia, se tisparkle.nmconnection contiene segreti (PSK, XAuth) e il repo Git è pubblico,
-# si stanno esponendo credenziali in chiaro. 
 install -m 0600 assets/tisparkle.nmconnection \
   %{buildroot}/etc/NetworkManager/system-connections/tisparkle.nmconnection
 
 # =========================================================================
-# %files — lista file inclusi nel pacchetto
+# %files - lista file inclusi nel pacchetto
 # =========================================================================
 %files
 

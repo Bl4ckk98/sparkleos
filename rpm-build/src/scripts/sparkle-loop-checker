@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# sparkle-loop-checker — Rilevamento loop su tracce TCAP (pcap.json)
+# sparkle-loop-checker - Rilevamento loop su tracce TCAP (pcap.json)
 # Analizza i Transaction ID e segnala loop tramite threshold configurabile
 
 import time
@@ -52,7 +52,7 @@ def write_results(transaction_ids: dict, threshold: int, output_file: str) -> No
     with open(output_file, 'w') as f:
         for tid, freq in sorted_tids:
             if freq > threshold:
-                f.write(f"Transaction ID {tid} — occorrenze: {freq}\n")
+                f.write(f"Transaction ID {tid} - occorrenze: {freq}\n")
 
 
 def main():
