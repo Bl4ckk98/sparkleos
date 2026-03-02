@@ -20,7 +20,8 @@ user --name=liveuser --gecos="Live User" --password=liveuser --plaintext --group
 bootloader --location=mbr
 
 # ------ Partizionamento (minimale per ISO live) ---------------
-# clearpart e part rimossi perché si tratta di livemedia/lorax
+clearpart --all --initlabel
+part / --size=8192 --fstype=ext4
 
 # ------ Modalità grafica e DE --------------------------------
 xconfig --startxonboot
