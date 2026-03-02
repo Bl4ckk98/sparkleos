@@ -1,5 +1,5 @@
 # ============================================================
-# SparkleOS - Kickstart per Fedora 42 KDE
+# SparkleOS - Kickstart per Fedora KDE
 # ============================================================
 # Basato sulla gerarchia ufficiale Fedora KDE Spin.
 # I file base nella cartella ks/ gestiscono:
@@ -21,11 +21,10 @@ timezone Europe/Rome --utc
 # ------ Override: shutdown -> reboot per la live --
 reboot
 
-# ------ Override utente live SparkleOS ----------------------
-user --name=liveuser --gecos="Live User" --password=liveuser --plaintext --groups=wheel
-
-# ------ Override dimensione partizione ----------------------
-part / --size=8192 --fstype=ext4
+# ------ Override dimensione partizione (DVD payload) --------
+# Sovrascrive la part / --size=5120 definita in fedora-live-base.ks
+# Valore allineato allo standard fedora-live-kde.ks (9000 MB)
+part / --size=9000
 
 # ============================================================
 # PACCHETTI SPARKLE-OS

@@ -1,9 +1,14 @@
 # ============================================================
-# SparkleOS - Repository Configuration (Fedora 42)
+# SparkleOS - Repository Configuration
+# ============================================================
+# Usa $releasever (impostato da --releasever in livemedia-creator)
+# per evitare di hardcodare la versione Fedora.
+# Allineato allo standard Fedora (fedora-repo-not-rawhide.ks).
 # ============================================================
 
-url --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=fedora-42&arch=$basearch
+repo --name=fedora --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=fedora-$releasever&arch=$basearch
+repo --name=updates --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f$releasever&arch=$basearch
+url --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=fedora-$releasever&arch=$basearch
 
-repo --name=fedora-updates --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f42&arch=$basearch
-
-repo --name=copr-sparkle-os --baseurl=https://download.copr.fedorainfracloud.org/results/bl4ckk/sparkle-os/fedora-42-x86_64/
+# SparkleOS Copr repository
+repo --name=copr-sparkle-os --baseurl=https://download.copr.fedorainfracloud.org/results/bl4ckk/sparkle-os/fedora-$releasever-x86_64/

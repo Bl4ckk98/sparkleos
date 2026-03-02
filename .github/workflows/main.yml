@@ -138,6 +138,7 @@ jobs:
             lorax \
             anaconda-tui \
             pykickstart \
+            dbus-daemon \
             --setopt=cachedir=${{ github.workspace }}/.dnf-cache \
             --setopt=keepcache=1
 
@@ -157,6 +158,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sparkleos-build-log
-          path: output/livemedia.log
+          path: |
+            livemedia.log
+            program.log
+            logs/
           retention-days: 7
           if-no-files-found: ignore

@@ -62,7 +62,7 @@ if [ ! -e /dev/loop-control ] || ! command -v livemedia-creator &>/dev/null; the
     -v "${LOG_DIR}:/var/log/anaconda" \
     -v "${SCRIPT_DIR}:/workspace" \
     -w /workspace \
-    quay.io/fedora/fedora:41 \
+    quay.io/fedora/fedora:42 \
     bash -c "
       echo '=> Installazione dipendenze per livemedia-creator...'
       dnf install -y lorax anaconda-tui pykickstart dbus-daemon > /dev/null
