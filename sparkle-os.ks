@@ -60,6 +60,34 @@ NetworkManager-libreswan
 # ============================================================
 %post --erroronfail
 
+# ---- Fix dracut-ng bug #1240 (get_url_handler: command not found) ----
+# Upstream fix: https://github.com/dracut-ng/dracut-ng/commit/f399a28
+# Rimuove la chiamata stray a get_url_handler in parse-livenet.sh
+# che viene eseguita prima che url-lib.sh venga caricata.
+# Può essere rimosso quando dracut >= 106 con il fix sarà in Fedora 42.
+LIVENET_PARSE="/usr/lib/dracut/modules.d/90livenet/parse-livenet.sh"
+if [ -f "$LIVENET_PARSE" ] && grep -q '^get_url_handler$' "$LIVENET_PARSE"; then
+    sed -i '/^get_url_handler$/d' "$LIVENET_PARSE"
+    echo "INFO: Patched dracut livenet module (bug #1240)"
+fi
+
+# ---- Fix Fedora 42: systemd-sysroot-fstab-check mancante in initramfs ----
+# Il binario esiste nel sistema ma dracut non lo include nell'initramfs,
+# causando il fallimento di initrd-parse-etc.service → emergency shell.
+# La config dracut da sola non basta: bisogna rigenerare l'initramfs.
+FSTAB_CHECK="/usr/lib/systemd/systemd-sysroot-fstab-check"
+if [ -f "$FSTAB_CHECK" ]; then
+    mkdir -p /etc/dracut.conf.d
+    echo "install_items+=\" $FSTAB_CHECK \"" > /etc/dracut.conf.d/99-sysroot-fstab-check.conf
+    echo "INFO: Added dracut config to include systemd-sysroot-fstab-check"
+    # Rigenera l'initramfs per includere il binario nella live ISO
+    KERNEL_VER=$(ls /lib/modules/ | sort -V | tail -1)
+    if [ -n "$KERNEL_VER" ]; then
+        dracut --force /boot/initramfs-${KERNEL_VER}.img "$KERNEL_VER"
+        echo "INFO: Regenerated initramfs for kernel $KERNEL_VER"
+    fi
+fi
+
 # ---- Sessione livesys: KDE ----
 sed -i 's/^livesys_session=.*/livesys_session="kde"/' /etc/sysconfig/livesys
 
