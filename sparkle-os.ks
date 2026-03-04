@@ -91,11 +91,52 @@ fi
 # ---- Sessione livesys: KDE ----
 sed -i 's/^livesys_session=.*/livesys_session="kde"/' /etc/sysconfig/livesys
 
-# ---- Sfondo KDE per nuovi utenti (via /etc/skel) ----
-mkdir -p /etc/skel/.config/plasma-workspace/env
+# ---- Forza locale italiano nella sessione live ----
+# livesys-late.service legge /etc/sysconfig/livesys e forza LANG;
+# aggiungiamo la nostra impostazione affinché la sessione live sia italiana.
+cat >> /etc/sysconfig/livesys << 'LIVESYS_LOCALE'
 
-cat > /etc/skel/.config/plasma-workspace/env/set-wallpaper.sh << 'PLASMA_SCRIPT'
+# SparkleOS - Forza italiano nella sessione live
+LANG="it_IT.UTF-8"
+LIVESYS_LOCALE
+
+# Imposta locale e tastiera a livello di sistema (persistente)
+echo 'LANG="it_IT.UTF-8"' > /etc/locale.conf
+cat > /etc/vconsole.conf << 'VCONSOLE'
+KEYMAP="it"
+FONT="eurlatgr"
+VCONSOLE
+# localectl potrebbe non funzionare in chroot, usiamo i file sopra come fonte primaria
+localectl set-locale LANG=it_IT.UTF-8 2>/dev/null || true
+localectl set-keymap it 2>/dev/null || true
+localectl set-x11-keymap it 2>/dev/null || true
+
+# ---- Sfondo KDE (via /etc/skel) ----
+# Metodo 1: Config statico di Plasma - letto direttamente da plasmashell al primo avvio
+mkdir -p /etc/skel/.config/
+cat > /etc/skel/.config/plasma-org.kde.plasma.desktop-appletsrc << 'PLASMARC'
+[Containments][1]
+activityId=
+formfactor=0
+immutability=1
+lastScreen=0
+location=0
+plugin=org.kde.desktopcontainment
+wallpaperplugin=org.kde.image
+
+[Containments][1][Wallpaper][org.kde.image][General]
+Image=file:///usr/share/backgrounds/sparkle/background.jpg
+FillMode=1
+PLASMARC
+
+# Metodo 2: Script qdbus di fallback (per schermi aggiuntivi o aggiornamenti runtime)
+mkdir -p /etc/skel/.config/autostart/
+mkdir -p /etc/skel/.local/bin/
+
+cat > /etc/skel/.local/bin/set-sparkle-wallpaper.sh << 'PLASMA_SCRIPT'
 #!/bin/bash
+# Attesa che plasmashell sia pronto
+sleep 4
 if [ "$XDG_SESSION_DESKTOP" = "KDE" ] || [ "$XDG_SESSION_DESKTOP" = "plasma" ]; then
   qdbus org.kde.plasmashell /PlasmaShell \
     org.kde.PlasmaShell.evaluateScript "
@@ -109,6 +150,14 @@ if [ "$XDG_SESSION_DESKTOP" = "KDE" ] || [ "$XDG_SESSION_DESKTOP" = "plasma" ]; 
     " 2>/dev/null || true
 fi
 PLASMA_SCRIPT
-chmod +x /etc/skel/.config/plasma-workspace/env/set-wallpaper.sh
+chmod +x /etc/skel/.local/bin/set-sparkle-wallpaper.sh
+
+cat > /etc/skel/.config/autostart/set-sparkle-wallpaper.desktop << 'EOF'
+[Desktop Entry]
+Exec=/bin/bash -c "if [ -f ~/.local/bin/set-sparkle-wallpaper.sh ]; then ~/.local/bin/set-sparkle-wallpaper.sh; fi"
+Name=Set SparkleOS Wallpaper
+Type=Application
+X-KDE-AutostartScript=true
+EOF
 
 %end
