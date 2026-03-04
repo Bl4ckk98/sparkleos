@@ -142,10 +142,11 @@ livemedia-creator \
   --resultdir="${OUTPUT_DIR}" \
   --project="SparkleOS" \
   --make-iso \
-  --volid="SparkleOS-1.0" \
   --iso-only \
+  --volid="SparkleOS-1.0.0" \
+  --extra-boot-args="inst.lang=it_IT.UTF-8 inst.keymap=it" \
   --releasever=42 \
-  --image-size=5120 \
+  --image-size=9000 \
   --logfile="${LOG_FILE}" \
   --tmp="${TMP_DIR}" &
 

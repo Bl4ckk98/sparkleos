@@ -44,6 +44,7 @@ bash-completion
 net-tools
 
 # Localizzazione italiana
+glibc-langpack-it
 langpacks-it
 
 # Dipendenze Python per gli script SparkleOS
@@ -91,25 +92,25 @@ fi
 # ---- Sessione livesys: KDE ----
 sed -i 's/^livesys_session=.*/livesys_session="kde"/' /etc/sysconfig/livesys
 
-# ---- Forza locale italiano nella sessione live ----
-# livesys-late.service legge /etc/sysconfig/livesys e forza LANG;
-# aggiungiamo la nostra impostazione affinché la sessione live sia italiana.
-cat >> /etc/sysconfig/livesys << 'LIVESYS_LOCALE'
+# ---- Branding di sistema: SparkleOS 1.0.0 --------------------
+# Sovrascriviamo /etc/os-release in modo che il sistema (e l'installer)
+# si identifichino come SparkleOS invece che Fedora.
+if [ -f /etc/os-release ]; then
+  cp /etc/os-release /etc/os-release.fedora || true
+fi
 
-# SparkleOS - Forza italiano nella sessione live
-LANG="it_IT.UTF-8"
-LIVESYS_LOCALE
-
-# Imposta locale e tastiera a livello di sistema (persistente)
-echo 'LANG="it_IT.UTF-8"' > /etc/locale.conf
-cat > /etc/vconsole.conf << 'VCONSOLE'
-KEYMAP="it"
-FONT="eurlatgr"
-VCONSOLE
-# localectl potrebbe non funzionare in chroot, usiamo i file sopra come fonte primaria
-localectl set-locale LANG=it_IT.UTF-8 2>/dev/null || true
-localectl set-keymap it 2>/dev/null || true
-localectl set-x11-keymap it 2>/dev/null || true
+cat > /etc/os-release << 'OSREL'
+NAME="SparkleOS"
+VERSION="1.0.0 (KDE Plasma)"
+ID=sparkleos
+ID_LIKE=fedora
+VERSION_ID="1.0.0"
+PRETTY_NAME="SparkleOS 1.0.0 (KDE Plasma)"
+ANSI_COLOR="0;34"
+HOME_URL="https://github.com/bl4ckk/sparkleos"
+BUG_REPORT_URL="https://github.com/bl4ckk/sparkleos/issues"
+LOGO=fedora-kde
+OSREL
 
 # ---- Sfondo KDE (via /etc/skel) ----
 # Metodo 1: Config statico di Plasma - letto direttamente da plasmashell al primo avvio
@@ -159,5 +160,33 @@ Name=Set SparkleOS Wallpaper
 Type=Application
 X-KDE-AutostartScript=true
 EOF
+
+%end
+
+# ============================================================
+# %post --nochroot - Configurazione sistema installato
+# ============================================================
+%post --nochroot --erroronfail
+
+# Percorso root del sistema appena installato
+SYSROOT="/mnt/sysimage"
+
+# Branding SparkleOS anche nel sistema installato
+if [ -f "${SYSROOT}/etc/os-release" ]; then
+  cp "${SYSROOT}/etc/os-release" "${SYSROOT}/etc/os-release.fedora" || true
+fi
+
+cat > "${SYSROOT}/etc/os-release" << 'OSREL_CHROOT'
+NAME="SparkleOS"
+VERSION="1.0.0 (KDE Plasma)"
+ID=sparkleos
+ID_LIKE=fedora
+VERSION_ID="1.0.0"
+PRETTY_NAME="SparkleOS 1.0.0 (KDE Plasma)"
+ANSI_COLOR="0;34"
+HOME_URL="https://github.com/bl4ckk/sparkleos"
+BUG_REPORT_URL="https://github.com/bl4ckk/sparkleos/issues"
+LOGO=fedora-kde
+OSREL_CHROOT
 
 %end
