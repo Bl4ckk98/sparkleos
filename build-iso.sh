@@ -22,13 +22,51 @@ success() { echo -e "${GREEN}[OK]${RESET}    $*"; }
 warn()    { echo -e "${YELLOW}[WARN]${RESET}  $*"; }
 error()   { echo -e "${RED}[ERRORE]${RESET} $*" >&2; }
 
-# ------ Container execution fallback ---------------------------
-# Se non ci sono i loop devices disponibili (siamo in un container rootless) 
-# o manca livemedia-creator/lorax, rilanciamoci tramite podman con privilegi host
-if [ ! -e /dev/loop-control ] || ! command -v livemedia-creator &>/dev/null; then
-  warn "L'ambiente corrente manca di privilegi completi o pacchetti necessari."
-  info "Avvio build in container podman privilegiato..."
-  
+# ------ Rilevamento ambiente & scelta host/container -----------
+# Se siamo già dentro al container di build, saltiamo il rilevamento
+USE_CONTAINER=0
+
+if [ "${SPARKLEOS_IN_CONTAINER:-0}" != "1" ]; then
+  MISSING_COMPONENTS=()
+  for cmd in livemedia-creator anaconda lorax anaconda-tui ksflatten; do
+    if ! command -v "$cmd" &>/dev/null; then
+      MISSING_COMPONENTS+=("$cmd")
+    fi
+  done
+
+  LOOP_OK=1
+  if [ ! -e /dev/loop-control ]; then
+    LOOP_OK=0
+  fi
+
+  if [ "${#MISSING_COMPONENTS[@]}" -gt 0 ] || [ "$LOOP_OK" -eq 0 ]; then
+    if [ "${#MISSING_COMPONENTS[@]}" -gt 0 ]; then
+      warn "Componenti necessari non trovati sull'host: ${MISSING_COMPONENTS[*]}"
+    fi
+    if [ "$LOOP_OK" -eq 0 ]; then
+      warn "Device loop non accessibili (/dev/loop-control mancante)."
+    fi
+    info "Userò automaticamente l'ambiente containerizzato per la build."
+    USE_CONTAINER=1
+  else
+    echo ""
+    info "Tutti i componenti necessari risultano presenti sull'host e i loop device sono accessibili."
+    read -r -p "Vuoi procedere usando il sistema host [S] o preferisci il sistema containerizzato [N]? [S/n]: " ANSWER || ANSWER=""
+    case "${ANSWER}" in
+      [Nn]*)
+        USE_CONTAINER=1
+        ;;
+      *)
+        USE_CONTAINER=0
+        ;;
+    esac
+  fi
+fi
+
+# ------ Esecuzione in container (se selezionato o necessaria) ---
+if [ "$USE_CONTAINER" -eq 1 ]; then
+  warn "Avvio build in container privilegiato (podman/docker)..."
+
   # Determina il container engine (podman o docker)
   CONTAINER_CMD=""
   if command -v podman &>/dev/null; then
@@ -44,16 +82,18 @@ if [ ! -e /dev/loop-control ] || ! command -v livemedia-creator &>/dev/null; the
   if [ "$EUID" -ne 0 ] && command -v sudo &>/dev/null; then
     CONTAINER_CMD="sudo $CONTAINER_CMD"
   fi
-  
+
   info "Engine rilevato: $CONTAINER_CMD"
-  
+
   ############################################################
   # Salviamo i log di Anaconda in una directory persistente
+  # e montiamo una cache DNF condivisa per velocizzare le build
   ############################################################
   LOG_DIR="${SCRIPT_DIR}/logs/anaconda"
   rm -rf "${LOG_DIR}"
   mkdir -p "${LOG_DIR}"
-  
+  mkdir -p "${DNF_CACHE_DIR}"
+
   exec $CONTAINER_CMD run --rm -it \
     --name "sparkleos-builder-$$" \
     --privileged \
@@ -61,12 +101,14 @@ if [ ! -e /dev/loop-control ] || ! command -v livemedia-creator &>/dev/null; the
     -v /dev:/dev \
     -v "${LOG_DIR}:/var/log/anaconda" \
     -v "${SCRIPT_DIR}:/workspace" \
+    -v "${DNF_CACHE_DIR}:/var/cache/dnf" \
     -w /workspace \
+    -e SPARKLEOS_IN_CONTAINER=1 \
     quay.io/fedora/fedora:42 \
     bash -c "
       echo '=> Installazione dipendenze per livemedia-creator...'
       dnf install -y lorax anaconda-tui pykickstart dbus-daemon > /dev/null
-      
+
       echo '=> Rimozione filtro lingue del container...'
       echo '%_install_langs all' > /etc/rpm/macros.image-language-conf
 
@@ -75,7 +117,7 @@ if [ ! -e /dev/loop-control ] || ! command -v livemedia-creator &>/dev/null; the
       dbus-daemon --system --fork
       dbus-daemon --session --fork --address=unix:path=/tmp/dbus-session
       export DBUS_SESSION_BUS_ADDRESS=unix:path=/tmp/dbus-session
-      
+
       echo '=> Avvio build...'
       ./build-iso.sh
     "
