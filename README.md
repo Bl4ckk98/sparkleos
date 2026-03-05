@@ -39,6 +39,3 @@ Non dovrai mai scaricare file manualmente o reinstallare il sistema per ottenere
 - Le nuove configurazioni e i nuovi tool saranno immediatamente disponibili, senza stress e nella maggior parte dei casi senza bisogno di riavviare il PC.
 
 Per qualsiasi problema o richiesta di assistenza, contatta gli sviluppatori.
-
-- Francesco e Matteo
-
