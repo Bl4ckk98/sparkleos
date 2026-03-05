@@ -77,6 +77,11 @@ install -d %{buildroot}%{_datadir}/plasma/desktoptheme/SparkleOS
 cp -rp theme/SparkleOS/* \
   %{buildroot}%{_datadir}/plasma/desktoptheme/SparkleOS/
 
+# --- Global Theme SparkleOS (Look and Feel) ----------------------------------
+install -d %{buildroot}%{_datadir}/plasma/look-and-feel/SparkleOS
+cp -rp theme/SparkleOS-LookAndFeel/* \
+  %{buildroot}%{_datadir}/plasma/look-and-feel/SparkleOS/
+
 # --- Profilo VPN NetworkManager/libreswan ----------------------------------
 install -d %{buildroot}/etc/NetworkManager/system-connections
 install -m 0600 assets/tisparkle.nmconnection \
@@ -96,6 +101,7 @@ install -m 0600 assets/tisparkle.nmconnection \
 %{_datadir}/backgrounds/sparkle/background.jpg
 
 %{_datadir}/plasma/desktoptheme/SparkleOS/
+%{_datadir}/plasma/look-and-feel/SparkleOS/
 
 %config(noreplace) /etc/NetworkManager/system-connections/tisparkle.nmconnection
 

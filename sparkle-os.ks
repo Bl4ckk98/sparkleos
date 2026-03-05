@@ -123,9 +123,23 @@ background=/usr/share/backgrounds/sparkle/background.jpg
 type=image
 SDDM_CONF
 
-# Configurazione di Plasma (Sfondo del Desktop e Tema)
-# Impostiamo il tema desktop SparkleOS come default a livello di sistema
+# Configurazione di Plasma (Sfondo del Desktop e Global Theme)
+# Impostiamo il Global Theme SparkleOS come default a livello di sistema
 mkdir -p /etc/xdg/
+cat > /etc/xdg/kdeglobals << 'KDEGLOBALS'
+[General]
+ColorScheme=SparkleOS
+
+[KDE]
+SingleClick=false
+
+[WM]
+activeBackground=5,14,21
+activeForeground=215,241,248
+inactiveBackground=5,14,21
+inactiveForeground=161,169,177
+KDEGLOBALS
+
 cat > /etc/xdg/plasmarc << 'PLASMARC_SYS'
 [Theme]
 name=SparkleOS

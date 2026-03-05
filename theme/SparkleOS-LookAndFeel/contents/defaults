@@ -1,0 +1,11 @@
+[General]
+ColorScheme=SparkleOS
+
+[KDE]
+SingleClick=false
+
+[WM]
+activeBackground=5,14,21
+activeForeground=215,241,248
+inactiveBackground=5,14,21
+inactiveForeground=161,169,177
