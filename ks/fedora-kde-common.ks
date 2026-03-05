@@ -16,8 +16,6 @@ libreoffice-math
 
 fedora-release-kde
 
--@admin-tools
-
 # drop tracker stuff pulled in by gtk3 (pagureio:fedora-kde/SIG#124)
 -tracker-miners
 -tracker
@@ -40,11 +38,6 @@ fuse
 mediawriter
 
 ### space issues
--ktorrent			# kget has also basic torrent features (~3 megs)
--digikam			# digikam has duplicate functionality with gwenview (~28 megs)
--kipi-plugins			# ~8 megs + drags in Marble
--krusader			# ~4 megs
--k3b				# ~15 megs
 
 ## avoid serious bugs by omitting broken stuff
 
