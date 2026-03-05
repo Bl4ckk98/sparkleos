@@ -33,6 +33,7 @@ part / --size=9000
 # Pacchetto aziendale SparkleOS (dal Copr)
 sparkle-os
 
+
 # Tool di base
 vim
 nano

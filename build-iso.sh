@@ -67,6 +67,9 @@ if [ ! -e /dev/loop-control ] || ! command -v livemedia-creator &>/dev/null; the
       echo '=> Installazione dipendenze per livemedia-creator...'
       dnf install -y lorax anaconda-tui pykickstart dbus-daemon > /dev/null
       
+      echo '=> Rimozione filtro lingue del container...'
+      echo '%_install_langs all' > /etc/rpm/macros.image-language-conf
+
       echo '=> Avvio dbus-daemon...'
       mkdir -p /var/run/dbus
       dbus-daemon --system --fork
