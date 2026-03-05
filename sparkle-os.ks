@@ -145,6 +145,21 @@ for (var i = 0; i < allDesktops.length; i++) {
 }
 PLASMA_JS
 
+# ---- Aggiunta Repository COPR per SparkleOS ----
+mkdir -p /etc/yum.repos.d/
+cat > /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:bl4ckk:sparkleos.repo << 'EOF_REPO'
+[copr:copr.fedorainfracloud.org:bl4ckk:sparkleos]
+name=Copr repo for sparkleos owned by bl4ckk
+baseurl=https://download.copr.fedorainfracloud.org/results/bl4ckk/sparkleos/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/bl4ckk/sparkleos/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1
+EOF_REPO
+
 %end
 
 # ============================================================

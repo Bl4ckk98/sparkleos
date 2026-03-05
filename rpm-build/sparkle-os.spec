@@ -76,6 +76,8 @@ install -m 0644 assets/background.jpg \
 install -d %{buildroot}%{_datadir}/plasma/desktoptheme/SparkleOS
 cp -rp theme/SparkleOS/* \
   %{buildroot}%{_datadir}/plasma/desktoptheme/SparkleOS/
+# Rimuovi il file .desktop vecchio (Plasma 6 usa solo .json e .plasmarc)
+rm -f %{buildroot}%{_datadir}/plasma/desktoptheme/SparkleOS/metadata.desktop
 
 # --- Profilo VPN NetworkManager/libreswan ----------------------------------
 install -d %{buildroot}/etc/NetworkManager/system-connections
@@ -108,4 +110,5 @@ install -m 0600 assets/tisparkle.nmconnection \
 - Integrati: am-ssh, loop-checker, route-adder, netnumber-links
 - Aggiunto profilo VPN libreswan (tisparkle.nmconnection)
 - Aggiunto sfondo aziendale
-- Aggiunto tema Plasma aziendale (SparkleOS)
+- Aggiunto tema Plasma aziendale (SparkleOS per Plasma 6)
+
