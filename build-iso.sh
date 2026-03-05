@@ -13,6 +13,15 @@ TMP_DIR="${SCRIPT_DIR}/tmp"
 LOG_FILE="${SCRIPT_DIR}/livemedia.log"
 START_TIME=$(date +%s)
 
+# ------ Versioning centralizzato --------------------------------
+# Valori di default (sovrascrivibili via variabili d'ambiente)
+SPARKLEOS_VERSION_DEFAULT="1.0.0"
+FEDORA_RELEASE_DEFAULT="43"
+
+SPARKLEOS_VERSION="${SPARKLEOS_VERSION:-$SPARKLEOS_VERSION_DEFAULT}"
+FEDORA_RELEASE="${FEDORA_RELEASE:-$FEDORA_RELEASE_DEFAULT}"
+SPARKLEOS_VOLID="SparkleOS-${SPARKLEOS_VERSION}"
+
 # ------ Colori -----------------------------------------------
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
 CYAN='\033[0;36m'; BOLD='\033[1m'; RESET='\033[0m'
@@ -101,10 +110,10 @@ if [ "$USE_CONTAINER" -eq 1 ]; then
     -v /dev:/dev \
     -v "${LOG_DIR}:/var/log/anaconda" \
     -v "${SCRIPT_DIR}:/workspace" \
-    -v "${DNF_CACHE_DIR}:/var/cache/dnf" \
+    -v "${DNF_CACHE_DIR}:/var/cache" \
     -w /workspace \
     -e SPARKLEOS_IN_CONTAINER=1 \
-    quay.io/fedora/fedora:42 \
+    "quay.io/fedora/fedora:${FEDORA_RELEASE}" \
     bash -c "
       echo '=> Installazione dipendenze per livemedia-creator...'
       dnf install -y lorax anaconda-tui pykickstart dbus-daemon > /dev/null
@@ -188,9 +197,9 @@ livemedia-creator \
   --project="SparkleOS" \
   --make-iso \
   --iso-only \
-  --volid="SparkleOS-1.0.0" \
+  --volid="${SPARKLEOS_VOLID}" \
   --extra-boot-args="inst.lang=it_IT.UTF-8 inst.keymap=it" \
-  --releasever=42 \
+  --releasever="${FEDORA_RELEASE}" \
   --image-size=9000 \
   --logfile="${LOG_FILE}" \
   --tmp="${TMP_DIR}" &
