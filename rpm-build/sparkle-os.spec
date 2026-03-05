@@ -76,8 +76,6 @@ install -m 0644 assets/background.jpg \
 install -d %{buildroot}%{_datadir}/plasma/desktoptheme/SparkleOS
 cp -rp theme/SparkleOS/* \
   %{buildroot}%{_datadir}/plasma/desktoptheme/SparkleOS/
-# Rimuovi il file .desktop vecchio (Plasma 6 usa solo .json e .plasmarc)
-rm -f %{buildroot}%{_datadir}/plasma/desktoptheme/SparkleOS/metadata.desktop
 
 # --- Profilo VPN NetworkManager/libreswan ----------------------------------
 install -d %{buildroot}/etc/NetworkManager/system-connections
