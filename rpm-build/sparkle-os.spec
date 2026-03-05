@@ -103,7 +103,7 @@ install -m 0600 assets/tisparkle.nmconnection \
 # %changelog
 # =========================================================================
 %changelog
-* Sat Mar 01 2026 bl4ckk <bl4ckk@tisparkle.com> - 1.0.0-1
+* Sun Mar 01 2026 Bl4ckk98 <dasheroo33@gmail.com> - 1.0.0-1
 - Prima release ufficiale SparkleOS (Fedora 42 / KDE)
 - Integrati: am-ssh, loop-checker, route-adder, netnumber-links
 - Aggiunto profilo VPN libreswan (tisparkle.nmconnection)

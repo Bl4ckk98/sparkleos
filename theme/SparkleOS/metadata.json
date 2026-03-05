@@ -1,0 +1,31 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "info@francescoguida.net",
+                "Name": "bl4ckk"
+            }
+        ],
+        "Category": "Plasma Theme",
+        "Description": "SparkleOS Plasma Theme",
+        "EnabledByDefault": true,
+        "Id": "SparkleOS",
+        "License": "GPLv3",
+        "Name": "SparkleOS",
+        "Version": "27.7",
+        "Website": "https://github.com/bl4ckk"
+    },
+    "X-Plasma-API": "5.0",
+    "AdaptiveTransparency": {
+        "enabled": true
+    },
+    "BlurBehindEffect": {
+        "enabled": true
+    },
+    "ContrastEffect": {
+        "contrast": 0.4,
+        "enabled": false,
+        "intensity": 0.6,
+        "saturation": 8
+    }
+}
