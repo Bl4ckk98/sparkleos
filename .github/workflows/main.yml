@@ -113,55 +113,55 @@ jobs:
   # Gira dentro un container Fedora 42 nativo GHA (privileged)
   # per accesso ai loop devices - nessun container richiesto.
   # ============================================================
-  build-iso:
-    name: Build ISO
-    runs-on: ubuntu-latest
-    needs: build-rpm          # attende che l'RPM sia su COPR prima di buildare la ISO
-    container:
-      image: fedora:43
-      options: --privileged --device /dev/loop-control
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Cache DNF packages
-        uses: actions/cache@v4
-        with:
-          path: .dnf-cache
-          key: dnf-fedora43-${{ hashFiles('sparkle-os.ks') }}
-          restore-keys: |
-            dnf-fedora43-
-
-      - name: Install build dependencies
-        run: |
-          dnf install -y \
-            lorax \
-            anaconda-tui \
-            pykickstart \
-            dbus-daemon \
-            --setopt=cachedir=${{ github.workspace }}/.dnf-cache \
-            --setopt=keepcache=1
-
-      - name: Build ISO
-        run: bash build-iso.sh
-
-      - name: Upload ISO artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sparkleos-iso
-          path: output/*.iso
-          retention-days: 7
-          if-no-files-found: error
-
-      - name: Upload build log (always)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: sparkleos-build-log
-          path: |
-            livemedia.log
-            program.log
-            logs/
-          retention-days: 7
-          if-no-files-found: ignore
+#  build-iso:
+#    name: Build ISO
+#    runs-on: ubuntu-latest
+#    needs: build-rpm          # attende che l'RPM sia su COPR prima di buildare la ISO
+#    container:
+#      image: fedora:43
+#      options: --privileged --device /dev/loop-control
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Cache DNF packages
+#        uses: actions/cache@v4
+#        with:
+#          path: .dnf-cache
+#          key: dnf-fedora43-${{ hashFiles('sparkle-os.ks') }}
+#          restore-keys: |
+#            dnf-fedora43-
+#
+#      - name: Install build dependencies
+#        run: |
+#          dnf install -y \
+#            lorax \
+#            anaconda-tui \
+#            pykickstart \
+#            dbus-daemon \
+#            --setopt=cachedir=${{ github.workspace }}/.dnf-cache \
+#            --setopt=keepcache=1
+#
+#      - name: Build ISO
+#        run: bash build-iso.sh
+#
+#      - name: Upload ISO artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: sparkleos-iso
+#          path: output/*.iso
+#          retention-days: 7
+#          if-no-files-found: error
+#
+#      - name: Upload build log (always)
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: sparkleos-build-log
+#          path: |
+#            livemedia.log
+#            program.log
+#            logs/
+#          retention-days: 7
+#          if-no-files-found: ignore
