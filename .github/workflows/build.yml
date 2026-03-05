@@ -2,7 +2,7 @@
 # SparkleOS CI/CD - Build RPM, upload su Fedora Copr, build ISO
 # Si attiva ad ogni push sul branch main.
 # ============================================================
-name: Build & Publish SparkleOS
+name: SparkleOS Build Pipeline
 
 on:
   push:
