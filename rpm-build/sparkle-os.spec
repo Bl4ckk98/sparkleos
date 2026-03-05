@@ -30,6 +30,7 @@ Pacchetto unificato SparkleOS. Include:
   - sparkle-loop-checker    : Rilevamento loop TCAP su dump pcap
   - sparkle-netnumber-links : Analisi ed export link NetNumber SS7/Diameter
   - Sfondo aziendale        : /usr/share/backgrounds/sparkle/background.jpg
+  - Tema Desktop Plasma     : /usr/share/plasma/desktoptheme/SparkleOS
   - Profilo VPN             : /etc/NetworkManager/system-connections/tisparkle.nmconnection
 
 # =========================================================================
@@ -71,6 +72,11 @@ install -d %{buildroot}%{_datadir}/backgrounds/sparkle
 install -m 0644 assets/background.jpg \
   %{buildroot}%{_datadir}/backgrounds/sparkle/background.jpg
 
+# --- Tema Plasma SparkleOS --------------------------------------------------
+install -d %{buildroot}%{_datadir}/plasma/desktoptheme/SparkleOS
+cp -rp theme/SparkleOS/* \
+  %{buildroot}%{_datadir}/plasma/desktoptheme/SparkleOS/
+
 # --- Profilo VPN NetworkManager/libreswan ----------------------------------
 install -d %{buildroot}/etc/NetworkManager/system-connections
 install -m 0600 assets/tisparkle.nmconnection \
@@ -89,6 +95,8 @@ install -m 0600 assets/tisparkle.nmconnection \
 
 %{_datadir}/backgrounds/sparkle/background.jpg
 
+%{_datadir}/plasma/desktoptheme/SparkleOS/
+
 %config(noreplace) /etc/NetworkManager/system-connections/tisparkle.nmconnection
 
 # =========================================================================
@@ -100,3 +108,4 @@ install -m 0600 assets/tisparkle.nmconnection \
 - Integrati: am-ssh, loop-checker, route-adder, netnumber-links
 - Aggiunto profilo VPN libreswan (tisparkle.nmconnection)
 - Aggiunto sfondo aziendale
+- Aggiunto tema Plasma aziendale (SparkleOS)

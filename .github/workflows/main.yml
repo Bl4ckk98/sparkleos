@@ -50,7 +50,8 @@ jobs:
           tar czf ~/rpmbuild/SOURCES/sparkle-os-${VERSION}.tar.gz \
             --transform="s|^|sparkle-os-${VERSION}/|" \
             rpm-build/src/ \
-            assets/
+            assets/ \
+            theme/
           echo "Tarball contents:"
           tar tzf ~/rpmbuild/SOURCES/sparkle-os-${VERSION}.tar.gz | head -30
 

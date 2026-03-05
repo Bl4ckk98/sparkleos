@@ -123,7 +123,14 @@ background=/usr/share/backgrounds/sparkle/background.jpg
 type=image
 SDDM_CONF
 
-# Configurazione di Plasma (Sfondo del Desktop)
+# Configurazione di Plasma (Sfondo del Desktop e Tema)
+# Impostiamo il tema desktop SparkleOS come default a livello di sistema
+mkdir -p /etc/xdg/
+cat > /etc/xdg/plasmarc << 'PLASMARC_SYS'
+[Theme]
+name=SparkleOS
+PLASMARC_SYS
+
 # Plasma esegue tutti gli script .js in questa directory una sola volta per utente.
 # Perfetto per liveuser e per il primo avvio del sistema installato.
 mkdir -p /usr/share/plasma/shells/org.kde.plasma.desktop/contents/updates/
