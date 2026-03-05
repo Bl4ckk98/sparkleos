@@ -113,54 +113,30 @@ BUG_REPORT_URL="https://github.com/bl4ckk/sparkleos/issues"
 LOGO=fedora-kde
 OSREL
 
-# ---- Sfondo KDE (via /etc/skel) ----
-# Metodo 1: Config statico di Plasma - letto direttamente da plasmashell al primo avvio
-mkdir -p /etc/skel/.config/
-cat > /etc/skel/.config/plasma-org.kde.plasma.desktop-appletsrc << 'PLASMARC'
-[Containments][1]
-activityId=
-formfactor=0
-immutability=1
-lastScreen=0
-location=0
-plugin=org.kde.desktopcontainment
-wallpaperplugin=org.kde.image
+# ---- Sfondo KDE (Plasma e SDDM) ----
+# Configurazione di SDDM (Schermata di Login)
+# Assicuriamoci che la directory esista per il tema
+mkdir -p /usr/share/sddm/themes/breeze/
+cat > /usr/share/sddm/themes/breeze/theme.conf.user << 'SDDM_CONF'
+[General]
+background=/usr/share/backgrounds/sparkle/background.jpg
+type=image
+SDDM_CONF
 
-[Containments][1][Wallpaper][org.kde.image][General]
-Image=file:///usr/share/backgrounds/sparkle/background.jpg
-FillMode=1
-PLASMARC
-
-# Metodo 2: Script qdbus di fallback (per schermi aggiuntivi o aggiornamenti runtime)
-mkdir -p /etc/skel/.config/autostart/
-mkdir -p /etc/skel/.local/bin/
-
-cat > /etc/skel/.local/bin/set-sparkle-wallpaper.sh << 'PLASMA_SCRIPT'
-#!/bin/bash
-# Attesa che plasmashell sia pronto
-sleep 4
-if [ "$XDG_SESSION_DESKTOP" = "KDE" ] || [ "$XDG_SESSION_DESKTOP" = "plasma" ]; then
-  qdbus org.kde.plasmashell /PlasmaShell \
-    org.kde.PlasmaShell.evaluateScript "
-      var allDesktops = desktops();
-      for (var i = 0; i < allDesktops.length; i++) {
-        var d = allDesktops[i];
-        d.wallpaperPlugin = 'org.kde.image';
-        d.currentConfigGroup = ['Wallpaper', 'org.kde.image', 'General'];
-        d.writeConfig('Image', 'file:///usr/share/backgrounds/sparkle/background.jpg');
-      }
-    " 2>/dev/null || true
-fi
-PLASMA_SCRIPT
-chmod +x /etc/skel/.local/bin/set-sparkle-wallpaper.sh
-
-cat > /etc/skel/.config/autostart/set-sparkle-wallpaper.desktop << 'EOF'
-[Desktop Entry]
-Exec=/bin/bash -c "if [ -f ~/.local/bin/set-sparkle-wallpaper.sh ]; then ~/.local/bin/set-sparkle-wallpaper.sh; fi"
-Name=Set SparkleOS Wallpaper
-Type=Application
-X-KDE-AutostartScript=true
-EOF
+# Configurazione di Plasma (Sfondo del Desktop)
+# Plasma esegue tutti gli script .js in questa directory una sola volta per utente.
+# Perfetto per liveuser e per il primo avvio del sistema installato.
+mkdir -p /usr/share/plasma/shells/org.kde.plasma.desktop/contents/updates/
+cat > /usr/share/plasma/shells/org.kde.plasma.desktop/contents/updates/99-sparkle-wallpaper.js << 'PLASMA_JS'
+var allDesktops = desktops();
+for (var i = 0; i < allDesktops.length; i++) {
+    var d = allDesktops[i];
+    d.wallpaperPlugin = "org.kde.image";
+    d.currentConfigGroup = Array("Wallpaper", "org.kde.image", "General");
+    d.writeConfig("Image", "file:///usr/share/backgrounds/sparkle/background.jpg");
+    d.writeConfig("FillMode", "1");
+}
+PLASMA_JS
 
 %end
 
