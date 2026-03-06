@@ -105,10 +105,9 @@ var layout = {
                     "DialogWidth": "1920"
                 }
             },
-            "height": 40,
+            "height": 1.625,
             "hiding": "normal",
             "location": "top",
-            "floating": 0,
             "maximumLength": 120,
             "minimumLength": 120,
             "offset": 0
@@ -119,7 +118,7 @@ var layout = {
                 {
                     "config": {
                         "/General": {
-                            "launchers": "applications:org.kde.dolphin.desktop,applications:org.kde.konsole.desktop,applications:firefox.desktop"
+                            "launchers": ""
                         }
                     },
                     "plugin": "org.kde.plasma.icontasks"
@@ -140,8 +139,10 @@ var layout = {
             "height": 3.25,
             "hiding": "windowscover",
             "location": "bottom",
-            "floating": 1,
-            "lengthMode": "fit",
+            "floating": 0,
+            "floating": "true",
+            "maximumLength": 49.75,
+            "minimumLength": 30,
             "offset": 0
         }
     ],
