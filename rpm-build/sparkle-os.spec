@@ -72,20 +72,38 @@ install -d %{buildroot}%{_datadir}/backgrounds/sparkle
 install -m 0644 assets/background.jpg \
   %{buildroot}%{_datadir}/backgrounds/sparkle/background.jpg
 
-# --- Tema Plasma SparkleOS --------------------------------------------------
+# --- Tema Plasma SparkleOS (Global Theme) -------------------------------------
+# Le varie componenti sono ora tutte contenute in cartelle all'interno di theme/SparkleOS
+
+# Desktop Theme
 install -d %{buildroot}%{_datadir}/plasma/desktoptheme/SparkleOS
-cp -rp theme/SparkleOS/* \
+cp -rp theme/SparkleOS/SparkleOS/* \
   %{buildroot}%{_datadir}/plasma/desktoptheme/SparkleOS/
 
-# --- Global Theme SparkleOS (Look and Feel) ----------------------------------
+# Look and Feel
 install -d %{buildroot}%{_datadir}/plasma/look-and-feel/SparkleOS
-cp -rp theme/SparkleOS-LookAndFeel/* \
+cp -rp theme/SparkleOS/look-and-feel/SparkleOS/* \
   %{buildroot}%{_datadir}/plasma/look-and-feel/SparkleOS/
 
-# --- Color Scheme SparkleOS ----------------------------------
+# Aurorae (Window Decorations)
+install -d %{buildroot}%{_datadir}/aurorae/themes/SparkleOS
+cp -rp theme/SparkleOS/aurorae/SparkleOS/* \
+  %{buildroot}%{_datadir}/aurorae/themes/SparkleOS/
+
+# Color Schemes
 install -d %{buildroot}%{_datadir}/color-schemes
-install -m 0644 theme/SparkleOS.colors \
-  %{buildroot}%{_datadir}/color-schemes/SparkleOS.colors
+install -m 0644 theme/SparkleOS/color-schemes/*.colors \
+  %{buildroot}%{_datadir}/color-schemes/
+
+# Konsole profile
+install -d %{buildroot}%{_datadir}/konsole
+install -m 0644 theme/SparkleOS/konsole/*.colorscheme \
+  %{buildroot}%{_datadir}/konsole/
+
+# Wallpapers
+install -d %{buildroot}%{_datadir}/wallpapers
+cp -rp theme/SparkleOS/wallpapers/* \
+  %{buildroot}%{_datadir}/wallpapers/
 
 # --- Profilo VPN NetworkManager/libreswan ----------------------------------
 install -d %{buildroot}/etc/NetworkManager/system-connections
@@ -107,7 +125,10 @@ install -m 0600 assets/tisparkle.nmconnection \
 
 %{_datadir}/plasma/desktoptheme/SparkleOS/
 %{_datadir}/plasma/look-and-feel/SparkleOS/
-%{_datadir}/color-schemes/SparkleOS.colors
+%{_datadir}/aurorae/themes/SparkleOS/
+%{_datadir}/color-schemes/*.colors
+%{_datadir}/konsole/*.colorscheme
+%{_datadir}/wallpapers/*
 
 %config(noreplace) /etc/NetworkManager/system-connections/tisparkle.nmconnection
 

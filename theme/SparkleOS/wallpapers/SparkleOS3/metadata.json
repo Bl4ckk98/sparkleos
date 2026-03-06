@@ -1,0 +1,15 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "gicalucejo@gmail.com",
+                "Name": "jomada"
+            }
+        ],
+        "Id": "SparkleOS3",
+        "License": "CC-BY-SA-4.0",
+        "Version": "1.1",
+        "Name": "SparkleOS3",
+         "Name[x-test]": "xxSparkleOS3xx"
+    }
+}

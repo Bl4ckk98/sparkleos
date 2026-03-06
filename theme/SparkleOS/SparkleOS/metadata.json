@@ -1,0 +1,19 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "gicalucejo@gmail.com",
+                "Name": "jomada"
+            }
+        ],
+        "Category": "",
+        "Description": "SparkleOS for Plasma",
+        "EnabledByDefault": true,
+        "Id": "SparkleOS",
+        "License": "LGPL",
+        "Name": "SparkleOS",
+        "Version": "1.4",
+        "Website": "https://seduccionlinux.wordpress.com"
+    },
+    "X-Plasma-API": "5.0"
+}
