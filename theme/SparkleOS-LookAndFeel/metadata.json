@@ -23,5 +23,6 @@
         "kns://plasma-themes.knsrc/api.kde-look.org/SparkleOS",
         "kns://colorschemes.knsrc/api.kde-look.org/SparkleOS",
         "kns://icons.knsrc/api.kde-look.org/breeze-dark"
-    ]
+    ],
+    "X-Plasma-API": "5.0"
 }

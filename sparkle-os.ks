@@ -132,6 +132,7 @@ ColorScheme=SparkleOS
 
 [KDE]
 SingleClick=false
+LookAndFeelPackage=SparkleOS
 
 [WM]
 activeBackground=5,14,21
