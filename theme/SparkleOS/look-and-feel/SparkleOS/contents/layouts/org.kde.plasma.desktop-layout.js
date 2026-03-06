@@ -105,9 +105,10 @@ var layout = {
                     "DialogWidth": "1920"
                 }
             },
-            "height": 1.625,
+            "height": 40,
             "hiding": "normal",
             "location": "top",
+            "floating": 0,
             "maximumLength": 120,
             "minimumLength": 120,
             "offset": 0
@@ -118,7 +119,7 @@ var layout = {
                 {
                     "config": {
                         "/General": {
-                            "launchers": ""
+                            "launchers": "applications:org.kde.dolphin.desktop,applications:org.kde.konsole.desktop,applications:firefox.desktop"
                         }
                     },
                     "plugin": "org.kde.plasma.icontasks"
@@ -139,15 +140,13 @@ var layout = {
             "height": 3.25,
             "hiding": "windowscover",
             "location": "bottom",
-            "floating": 0,
-            "floating": "true",
-            "maximumLength": 49.75,
-            "minimumLength": 30,
+            "floating": 1,
+            "lengthMode": "fit",
             "offset": 0
         }
     ],
     "serializationFormatVersion": "1"
 }
-;
+    ;
 
 plasma.loadSerializedLayout(layout);
