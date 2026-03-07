@@ -3,8 +3,8 @@
     "KPlugin": {
         "Authors": [
             {
-                "Email": "gicalucejo@gmail.com",
-                "Name": "jomada"
+                "Email": "dasheroo33@gmail.com",
+                "Name": "bl4ckk"
             }
         ],
         "Category": "Global Themes (Plasma 6)",
@@ -17,7 +17,7 @@
         "Id": "SparkleOS",
         "Version": "1.8",
         "License": "GPL 3+",
-        "Website": "https://seduccionlinux.wordpress.com",
+        "Website": "https://francescoguida.net",
         "Keywords": "Desktop;Workspace;Appearance;Look and Feel;Logout;Lock;Suspend;Shutdown;Hibernate;",
         "X-Plasma-APIVersion": "2"
     },
