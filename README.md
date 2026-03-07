@@ -1,41 +1,74 @@
-# SparkleOS
+<div align="center">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Telecom_Italia_Sparkle_logo_%282016-present%29.svg" alt="Telecom Italia Sparkle Logo" width="300" />
+</div>
 
-Benvenuto in **SparkleOS**, il sistema operativo aziendale ottimizzato per offrire un ambiente di lavoro fluido, sicuro e pre-configurato basato su Fedora 42.
-SparkleOS è basato su Fedora (con ambiente grafico KDE Plasma) e include tutti gli strumenti e le configurazioni necessarie per iniziare subito a lavorare, incluse le connessioni VPN aziendali e le utily di base.
+# 🌟 SparkleOS
 
-# 🚀 Installazione iniziale
+![OS](https://img.shields.io/badge/OS-Fedora%2042-blue)
+![Desktop Environment](https://img.shields.io/badge/Desktop_Environment-KDE_Plasma-informational?logo=kde)
 
-Per installare SparkleOS sul tuo computer aziendale:
-1. Richiedi la ISO agli sviluppatori e inseriscila in una chiavetta USB.
-2. Inserisci la chiavetta nel PC e avvia il sistema da USB.
-3. Segui le istruzioni a schermo per completare l'installazione. L'installer configurerà il sistema base in automatico.
-4. Al primo avvio, troverai il tuo ambiente di lavoro già pronto all'uso: lo sfondo aziendale impostato e i profili di rete (come la VPN) già pre-configurati.
+Benvenuto in **SparkleOS**, il sistema operativo aziendale ottimizzato per offrire un ambiente di lavoro fluido, sicuro e pre-configurato. 
+Basato su **Fedora 43** con ambiente desktop **KDE Plasma**, SparkleOS include sin dal primo avvio tutti gli strumenti essenziali per la produttività aziendale, comprese le configurazioni di rete (es. VPN) e le utility base di sistema.
 
-# Buildare la ISO
+---
 
+## 🚀 Installazione Iniziale
+
+Per installare SparkleOS sul computer aziendale, segui questi passaggi:
+
+1. **Richiedi la ISO:** Ottieni l'immagine ISO dagli sviluppatori e creane una chiavetta USB avviabile (utilizzando strumenti come *Rufus*, *Fedora Media Writer* o *BalenaEtcher*).
+2. **Avvia da USB:** Inserisci la chiavetta nel PC e procedi con l'avvio del sistema (Boot from USB).
+3. **Installa:** Segui le istruzioni a schermo per completare l'installazione. L'installer configurerà automaticamente il sistema base.
+4. **Pronto all'uso:** Al primo avvio, l'ambiente di lavoro sarà già operativo: troverai lo sfondo aziendale impostato e i profili di rete aziendali pre-configurati.
+
+---
+
+## 🛠️ Compilazione della ISO (Per Sviluppatori)
+
+Per costruire autonomamente l'immagine ISO di SparkleOS:
+
+```bash
 sudo ./build-iso.sh
+```
 
-# Per i log
+### Risoluzione dei problemi e Log
 
-## Log iniziali di Anaconda
+Durante o dopo la build, puoi monitorare il processo e analizzare i log generati dal container di installazione:
+
+```bash
+# Log iniziali di Anaconda
 sudo podman exec -it $(sudo podman ps -q -f name=sparkleos-builder) cat /tmp/anaconda.log
-## Vedi se il processo anaconda è ancora vivo
+
+# Verifica dei processi in esecuzione di Anaconda
 sudo podman exec -it $(sudo podman ps -q -f name=sparkleos-builder) ps aux | grep anaconda
-## Guarda il log di DNF (installazione pacchetti)
+
+# Log di DNF (installazione dei pacchetti)
 sudo podman exec -it $(sudo podman ps -q -f name=sparkleos-builder) cat /tmp/dnf.log
-## Guarda il log di packaging
+
+# Log di packaging
 sudo podman exec -it $(sudo podman ps -q -f name=sparkleos-builder) cat /tmp/packaging.log
-## Oppure il journal completo
+
+# Log del journal completo del container
 sudo podman exec -it $(sudo podman ps -q -f name=sparkleos-builder) journalctl -n 100
+```
 
-# 🔄 Ricevere gli Aggiornamenti
+---
 
-Il grande vantaggio di SparkleOS è che **si aggiorna da solo in modo invisibile e continuo**. 
-Non dovrai mai scaricare file manualmente o reinstallare il sistema per ottenere le nuove versioni dei tool aziendali o delle configurazioni.
+## 🔄 Ricevere gli Aggiornamenti
 
-- Quando gli sviluppatori rilasciano un aggiornamento, il tuo computer lo rileverà automaticamente insieme ai normali aggiornamenti di sistema di Fedora.
-- Riceverai una notifica nell'angolo in basso a destra (tramite **Discover**, il software center di sistema).
-- Ti basterà cliccare su "Aggiorna" (o in alternativa, usare il comando `sudo dnf upgrade` da terminale).
-- Le nuove configurazioni e i nuovi tool saranno immediatamente disponibili, senza stress e nella maggior parte dei casi senza bisogno di riavviare il PC.
+Il grande vantaggio di SparkleOS è la sua capacità di **aggiornarsi in modo invisibile e continuo**. 
+Non è mai necessario scaricare file manualmente o reinstallare il sistema per ottenere le nuove versioni dei tool aziendali o delle configurazioni modificate.
 
-Per qualsiasi problema o richiesta di assistenza, contatta gli sviluppatori.
+- **Rilevamento Automatico:** Quando gli sviluppatori rilasciano un aggiornamento, il tuo computer lo rileverà in automatico assieme ai normali aggiornamenti di sistema di Fedora.
+- **Notifiche:** Riceverai una notifica nell'angolo in basso a destra del desktop tramite **Discover**, il software center di sistema.
+- **Installazione Semplice:** Ti basterà cliccare su **"Aggiorna"** o, in alternativa, eseguire da terminale:
+  ```bash
+  sudo dnf upgrade
+  ```
+- **Zero Interruzioni:** Le nuove configurazioni e i nuovi tool saranno immediatamente disponibili, spesso senza alcun bisogno di riavviare il PC.
+
+---
+
+## 📞 Supporto
+
+Per qualsiasi problema, segnalazione di bug o richiesta di assistenza, ti invitiamo a contattare gli sviluppatori.
