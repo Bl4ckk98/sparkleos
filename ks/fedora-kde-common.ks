@@ -6,7 +6,6 @@
 @firefox
 @kde-apps
 @kde-media
-@kde-pim
 # Ensure we have Anaconda initial setup using kwin
 @kde-spin-initial-setup
 @libreoffice
@@ -22,6 +21,12 @@ fedora-release-kde
 
 # Not needed on desktops. See: https://pagure.io/fedora-kde/SIG/issue/566
 -mariadb-server-utils
+
+# Exclude KDE PIM suite and related unneeded background services
+-akonadi-server
+-mariadb-server
+-mariadb
+-mariadb-connector-c
 
 ### The KDE-Desktop
 
